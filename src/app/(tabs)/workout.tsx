@@ -1,6 +1,6 @@
-import { colors, globalStyles } from "@/styles/global";
-import { Text, ScrollView } from "react-native";
 import Button from "@/components/Button";
+import { colors, globalStyles } from "@/styles/global";
+import { ScrollView } from "react-native";
 
 
 export default function () {
@@ -10,7 +10,6 @@ export default function () {
 
     return (
         <ScrollView style={globalStyles.container}>
-            <Text style={globalStyles.title}>Workout</Text>
             <Button 
                 labeltext="Start Wrokout"
                 color={colors.primary}

@@ -22,6 +22,7 @@ export default function MacroCard({
   );
 }
 
+
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#16213e',

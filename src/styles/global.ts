@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export  const colors = {
   background: '#1a1a2e',
-  header: '#242444',
+  header: '#1a1a2e',
   surface: '#2a2a4a',
   primary: '#4fc3f7',
   text: '#ffffff',
@@ -14,7 +14,13 @@ export const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingTop: 60,
+    paddingTop: 70,
+    
+  },
+  scrollviewcontainer: {
+    flex: 1,
+    marginTop: 30,
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
   },
   title: {

@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import MacroCard from "./MacroCard"
+import MacroCard from "./MacroCard";
 
 export default function MacroGrid() {
   return (

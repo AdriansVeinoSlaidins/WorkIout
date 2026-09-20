@@ -1,16 +1,16 @@
-import { Text, View, StyleSheet, ScrollView } from "react-native";
-import { globalStyles } from "../../styles/global";
 import HomeHeader from "@/components/HomeHeader";
-import { Link } from "expo-router";
 import MacroGrid from "@/components/MacroGrid";
+import { ScrollView, View } from "react-native";
+import { globalStyles } from "../../styles/global";
 
 export default function Index() {
   return (
-    <ScrollView style={globalStyles.container}>
-      <Text style={globalStyles.title}>Hello! </Text>
+    <View style={globalStyles.container}>
       <HomeHeader/>
-      <MacroGrid/>
-    </ScrollView>
+      <ScrollView style={globalStyles.scrollviewcontainer}>
+        <MacroGrid/>
+      </ScrollView>
+    </View>
   );
 }
 
