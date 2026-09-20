@@ -9,7 +9,7 @@ export default function () {
     }
 
     return (
-        <ScrollView style={globalStyles.container}>
+        <ScrollView style={globalStyles.scrollviewcontainer}>
             <Button 
                 labeltext="Start Wrokout"
                 color={colors.primary}

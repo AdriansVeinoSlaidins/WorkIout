@@ -5,9 +5,7 @@ import { ScrollView } from "react-native";
 
 export default function () {
     return (
-        
-
-        <ScrollView style={globalStyles.container}>
+        <ScrollView style={globalStyles.scrollviewcontainer}>
                         <Button 
                             labeltext="Test"
                             color={colors.primary}

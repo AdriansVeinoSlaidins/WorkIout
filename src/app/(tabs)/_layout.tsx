@@ -1,10 +1,16 @@
-import { colors } from "@/styles/global";
+import HomeHeader from "@/components/HomeHeader";
+import { colors, globalStyles } from "@/styles/global";
+import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons"
+import { View } from "react-native";
 
 
 export default function TabLayout() {
     return(
+      <View style={globalStyles.container}>
+        
+        <HomeHeader/>
+
         <Tabs
         screenOptions={{
             headerShown: false,
@@ -44,5 +50,7 @@ export default function TabLayout() {
         }}
       />
         </Tabs>
+      </View>
+
     )
 }

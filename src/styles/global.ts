@@ -14,12 +14,12 @@ export const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingTop: 70,
+    paddingTop: 30,
     
   },
   scrollviewcontainer: {
     flex: 1,
-    marginTop: 30,
+    paddingTop: 10,
     backgroundColor: colors.background,
     paddingHorizontal: 20,
   },

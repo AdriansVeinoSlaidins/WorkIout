@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   streakButton: {
     position: 'absolute',
     left: '50%',
-    transform: [{ translateX: -25 }],
+    
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
