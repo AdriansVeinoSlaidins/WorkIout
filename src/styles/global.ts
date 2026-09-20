@@ -21,7 +21,7 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
     backgroundColor: colors.background,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   title: {
     fontSize: 28,
