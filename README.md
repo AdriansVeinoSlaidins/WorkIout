@@ -1,56 +1,81 @@
-# Welcome to your Expo app 👋
+# Git Quick Reference
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
-
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Create a new branch
 
 ```bash
-npm run reset-project
+git switch main
+git pull
+git switch -c feature/name
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Save changes to a new branch
 
-### Other setup steps
+```bash
+git add .
+git commit -m "Description of changes"
+git push -u origin feature/name
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Save changes to an existing branch
 
-## Learn more
+```bash
+git switch feature/name
+git add .
+git commit -m "Description of changes"
+git push
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Save changes directly to main
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+git switch main
+git add .
+git commit -m "Description of changes"
+git push
+```
 
-## Join the community
+## Merge a branch into main
 
-Join our community of developers creating universal apps.
+```bash
+git switch main
+git pull
+git merge feature/name
+git push
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Delete a branch after merging
+
+```bash
+git branch -d feature/name
+git push origin --delete feature/name
+```
+
+## Check current branch
+
+```bash
+git branch
+```
+
+## Check changes
+
+```bash
+git status
+```
+
+## Switch to an existing branch
+
+```bash
+git switch feature/name
+```
+
+## Get latest changes from GitHub
+
+```bash
+git pull
+```
+
+## Push changes to GitHub
+
+```bash
+git push
+```
