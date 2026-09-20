@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export  const colors = {
+export const colors = {
   background: '#1a1a2e',
   header: '#1a1a2e',
   surface: '#2a2a4a',
@@ -15,19 +15,21 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     paddingTop: 30,
-    
   },
+
   scrollviewcontainer: {
     flex: 1,
     paddingTop: 10,
     backgroundColor: colors.background,
     paddingHorizontal: 10,
   },
+
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: colors.text,
   },
+
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
@@ -35,10 +37,12 @@ export const globalStyles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 16,
   },
+
   empty: {
     color: colors.textSecondary,
     fontSize: 14,
   },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
