@@ -1,20 +1,56 @@
 import Button from "@/components/Button";
 import { colors, globalStyles } from "@/styles/global";
-import { ScrollView } from "react-native";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { useMemo, useRef } from "react";
+import { ScrollView, StyleSheet, Text } from "react-native";
+
+
 
 
 export default function () {
-    const handleButtonPress = () => {
-        console.log("Hello world! from here");
-    }
+    const SnapPoints = useMemo(() => ["25%", "50%", "75%"], []);
+    const BottomSheetRef = useRef<BottomSheet>(null);
 
-    return (
-        <ScrollView style={globalStyles.scrollviewcontainer}>
-            <Button 
-                labeltext="Start Wrokout"
-                color={colors.primary}
-                OnPress={handleButtonPress}
+
+    const OpenSheet = () => BottomSheetRef.current?.expand();
+
+    return (  
+        <>
+            <ScrollView style={globalStyles.scrollviewcontainer}>
+                <Button 
+                    labeltext="Start Workout"
+                    color={colors.primary}
+                    OnPress={OpenSheet}
                 />
-        </ScrollView>
+            </ScrollView>
+
+            <BottomSheet
+                ref={BottomSheetRef}
+                snapPoints={SnapPoints}
+                enablePanDownToClose
+                index={-1}
+            >
+                <BottomSheetView>
+                    <Text>yo</Text>
+                </BottomSheetView>
+            </BottomSheet>
+        </>
     )
 }
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	contentContainer: {
+		flex: 1,
+		alignItems: 'center'
+	},
+	containerHeadline: {
+		fontSize: 24,
+		fontWeight: '600',
+		padding: 20
+	}
+});
