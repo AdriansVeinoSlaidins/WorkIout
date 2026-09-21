@@ -4,6 +4,7 @@ export const colors = {
   background: '#1a1a2e',
   header: '#1a1a2e',
   surface: '#2a2a4a',
+  outline: "#ebecec",
   primary: '#4fc3f7',
   text: '#ffffff',
   textSecondary: '#a0a0b0',
