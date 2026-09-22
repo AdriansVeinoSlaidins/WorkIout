@@ -1,30 +1,27 @@
 import Button from "@/components/Button";
+import CustomHandle from "@/components/customHandle";
 import { colors, globalStyles } from "@/styles/global";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text } from "react-native";
 
-
-
-
 export default function () {
-    const SnapPoints = useMemo(() => ["4%","100%"], []);
+    const SnapPoints = useMemo(() => ["7%", "85%"], []);
     const BottomSheetRef = useRef<BottomSheet>(null);
 
-    function  buttonPress() {
-        console.log("Heelo mate")
-    }
+    const [sheetIndex, setSheetIndex] = useState(1);
 
-    const OpenSheet = () => BottomSheetRef.current?.expand();
+    const OpenSheet = () => {
+        BottomSheetRef.current?.expand();
+    };
 
-    return (  
+    return (
         <>
             <ScrollView style={globalStyles.scrollviewcontainer}>
-                <Button 
+                <Button
                     labeltext="Start Workout"
                     color={colors.primary}
                     OnPress={OpenSheet}
-                    
                 />
             </ScrollView>
 
@@ -32,53 +29,42 @@ export default function () {
                 ref={BottomSheetRef}
                 snapPoints={SnapPoints}
                 enablePanDownToClose={false}
+                enableOverDrag={false}
                 index={1}
-                enableHandlePanningGesture={true} 
+                enableHandlePanningGesture={true}
                 backgroundStyle={styles.handleBackground}
-                handleIndicatorStyle={styles.handle}
-            >
-                <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
-                    <Text>yo</Text>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
-                    <Button labeltext="Start Workout" color={colors.primary} OnPress={buttonPress}/>
 
+                onChange={(index) => {
+                    setSheetIndex(index);
+                }}
+
+                handleComponent={() => (
+                    <CustomHandle
+                        bottomSheetRef={BottomSheetRef}
+                        sheetIndex={sheetIndex}
+                    />
+                )}
+            >
+                <BottomSheetScrollView
+                    contentContainerStyle={styles.contentContainer}
+                >
+                    <Text>Yo</Text>
                 </BottomSheetScrollView>
             </BottomSheet>
         </>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center'
-	},
-	contentContainer: {
-		flex: 1,
-		backgroundColor: colors.surface ,
+    contentContainer: {
+        flex: 1,
+        backgroundColor: colors.background,
         margin: 15,
-	},
+    },
+
     handleBackground: {
         backgroundColor: colors.surface,
         borderColor: colors.outline,
         borderWidth: 2,
     },
-    handle: {
-        backgroundColor: "white",
-        width: 50,
-        marginBottom: 50,
-    }
 });
