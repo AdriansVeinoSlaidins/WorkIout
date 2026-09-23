@@ -6,7 +6,7 @@ import { useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text } from "react-native";
 
 export default function () {
-    const SnapPoints = useMemo(() => ["7%", "85%"], []);
+    const SnapPoints = useMemo(() => ["9%", "100%"], []);
     const BottomSheetRef = useRef<BottomSheet>(null);
 
     const [sheetIndex, setSheetIndex] = useState(1);
@@ -30,12 +30,14 @@ export default function () {
                 snapPoints={SnapPoints}
                 enablePanDownToClose={false}
                 enableOverDrag={false}
-                index={1}
+                index={-1}
                 enableHandlePanningGesture={true}
+                enableDynamicSizing={false}
                 backgroundStyle={styles.handleBackground}
 
                 onChange={(index) => {
                     setSheetIndex(index);
+                    console.log(index)
                 }}
 
                 handleComponent={() => (
