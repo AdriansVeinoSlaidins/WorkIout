@@ -1,4 +1,4 @@
-import { Pressable, Text, StyleSheet } from "react-native"
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 
 
@@ -14,12 +14,12 @@ export default function Button({
     OnPress,
 }: ButtonProps) {
     return (
-        <Pressable
+        <TouchableOpacity
         style={[styles.button, {backgroundColor: color}]}
         onPress={OnPress}
         >
             <Text style={styles.text}>{labeltext}</Text>
-        </Pressable>
+        </TouchableOpacity>
     )
 }
 

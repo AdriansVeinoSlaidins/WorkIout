@@ -26,27 +26,21 @@ export default function TabLayout() {
         name='index'
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='home' size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => (<Ionicons name='home' size={size} color={color} />),
         }}
       />
       <Tabs.Screen
         name='workout'
         options={{
           title: 'Workout',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='add-circle' size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => (<Ionicons name='add-circle' size={size} color={color} />),
         }}
       />
       <Tabs.Screen
         name='profile'
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='person' size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => (<Ionicons name='person' size={size} color={color} />),
         }}
       />
         </Tabs>

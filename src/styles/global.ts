@@ -18,6 +18,15 @@ export const globalStyles = StyleSheet.create({
     paddingTop: 30,
   },
 
+  buttonMainBlue: {
+    marginTop: 15,
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    backgroundColor: colors.primary,
+    
+  },
+
   scrollviewcontainer: {
     flex: 1,
     paddingTop: 10,
