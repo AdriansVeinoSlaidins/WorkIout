@@ -14,7 +14,7 @@ export default function ProgressWidget ({
     return (
         <View style={styles.container}>
             <Text style={styles.labelText}>{label}</Text>
-            <Text style={styles.maintext}>{value} kg</Text>
+            <Text style={styles.maintext}>{value}</Text>
         </View>
     )
 }

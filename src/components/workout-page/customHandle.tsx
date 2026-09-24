@@ -2,7 +2,7 @@ import { colors } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { useBottomSheet } from "@gorhom/bottom-sheet";
 import { RefObject } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
     Extrapolation,
     interpolate,
@@ -12,9 +12,13 @@ import Animated, {
 export default function CustomHandle({
     bottomSheetRef,
     sheetIndex,
+    time,
+    onFinish,
 }: {
     bottomSheetRef: RefObject<BottomSheet | null>;
     sheetIndex: number;
+    time: string;
+    onFinish: () => void;
 }) {
     const { animatedIndex } = useBottomSheet(); // continuous, live drag value
 
@@ -36,9 +40,13 @@ export default function CustomHandle({
 
     return (
         <View style={styles.handleContainer}>
+            
             <View style={styles.handle} />
 
             <View style={styles.controls}>
+
+                {/* up/down arrow */}
+
                 <TouchableOpacity style={styles.button} onPress={toggleSheet}>
 
                     <Animated.View style={[styles.iconLayer, upStyle]}>
@@ -51,13 +59,32 @@ export default function CustomHandle({
 
                 </TouchableOpacity>
 
+                {/* Timer */}
+
+                <Text style={styles.timer}>{time}</Text>
+                
+                {/* Finish workout button */}
 
                 <Animated.View style={downStyle}>
-                    <Text style={styles.timer}>00:00:00</Text>
-                </Animated.View>
-                    
-                <Animated.View style={downStyle}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity 
+                    style={styles.button}
+                    onPress={() => {
+                        Alert.alert(
+                            "Finish workout?",
+                            `Workout time: ${time}`,
+                            [
+                                {
+                                    text: "No",
+                                    style: "cancel",
+                                },
+                                {
+                                    text: "Yes",
+                                    onPress: onFinish,
+                                }
+                            ]
+                        )
+                    }}
+                    >
                         <Ionicons name="arrow-forward-circle-sharp" size={35} color={colors.text} />
                     </TouchableOpacity>
                 </Animated.View>

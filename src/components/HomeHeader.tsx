@@ -1,26 +1,26 @@
 import { colors } from '@/styles/global';
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeHeader() {
   return (
     <View style={styles.header}>
 
       {/* Profile */}
-      <Pressable style={styles.profileButton}>
+      <TouchableOpacity style={styles.profileButton}>
         <Ionicons name="person-circle-outline" size={28} color={colors.text} />
-      </Pressable>
+      </TouchableOpacity>
 
       {/* Streak */}
-      <Pressable style={styles.streakButton}>
+      <TouchableOpacity style={styles.streakButton}>
         <Ionicons name="flame" size={22} color={colors.text} />
         <Text style={styles.streak}>12</Text>
-      </Pressable>
+      </TouchableOpacity>
 
       {/* Settings */}
-      <Pressable style={styles.settingsButton}>
+      <TouchableOpacity style={styles.settingsButton}>
         <Ionicons name="settings-outline" size={24} color={colors.text} />
-      </Pressable>
+      </TouchableOpacity>
 
     </View>
   );
