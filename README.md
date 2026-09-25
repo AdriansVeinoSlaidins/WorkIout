@@ -244,4 +244,4 @@ That's basically the point of the project.
 
 ## License
 
-No final license has been chosen yet.
+This project is licensed under the MIT License.
