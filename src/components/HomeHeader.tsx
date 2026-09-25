@@ -1,13 +1,18 @@
 import { colors } from '@/styles/global';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeHeader() {
+
+
   return (
     <View style={styles.header}>
 
       {/* Profile */}
-      <TouchableOpacity style={styles.profileButton}>
+      <TouchableOpacity style={styles.profileButton}
+      onPress={() => router.push("/account")}
+      >
         <Ionicons name="person-circle-outline" size={28} color={colors.text} />
       </TouchableOpacity>
 

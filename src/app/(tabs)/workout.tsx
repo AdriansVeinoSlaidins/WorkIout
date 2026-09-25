@@ -4,7 +4,6 @@ import { colors, globalStyles } from "@/styles/global";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { supabase } from "../../../lib/supabase";
 
 export default function () {
     //Bottom Sheet
@@ -24,32 +23,6 @@ export default function () {
 
 
     const finishWorkout = async () => {
-            // Convert "00:05:32" into seconds
-        const [hours, minutes, seconds] = time
-            .split(":")
-            .map(Number);
-
-        const duration =
-            hours * 3600 +
-            minutes * 60 +
-            seconds;
-
-        // Save to Supabase
-        const { data, error } = await supabase
-            .from("finished_workouts")
-            .insert({
-                duration: duration,
-            })
-            .select();
-
-        if (error) {
-            console.log("Save error:", error);
-            return;
-        }
-
-        console.log("Workout saved:", data);
-        
-
 
         setRunning(false);
         reset();
