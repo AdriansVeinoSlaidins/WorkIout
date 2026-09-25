@@ -4,6 +4,8 @@ import { colors, globalStyles } from "@/styles/global";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { supabase } from "../../../lib/supabase";
+import { useAuth } from "../hooks/useAuth";
 
 export default function () {
     //Bottom Sheet
@@ -19,11 +21,33 @@ export default function () {
    
     //timer
     const [running, setRunning] = useState(false);
-    const {time, reset} = useTimer(running);
+    const {time, reset, seconds} = useTimer(running);
 
+
+    //database
+    const { session } = useAuth();
 
     const finishWorkout = async () => {
+        if (!session) return;
+        
 
+
+        const { data, error } = await supabase
+            .from("workouts")
+            .insert({
+                user_id: session.user.id,
+                name: "Workout",
+                duration: seconds,
+                completed_at: new Date().toISOString(),
+            })
+            .select()
+            .single();
+            
+            console.log("Saved data")
+            if (error) {
+                console.error("Failed to save workout:", error.message);
+                return null;
+        }
         setRunning(false);
         reset();
         setStarted(false);

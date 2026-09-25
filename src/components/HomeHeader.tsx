@@ -1,17 +1,27 @@
+import { useAuth } from '@/app/hooks/useAuth';
 import { colors } from '@/styles/global';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeHeader() {
+  const { session, loading } = useAuth();
 
+  const switchViews = () => {
+    if (!loading && session) {
+      router.replace("/profile");
+    } else {
+      router.push("/account")
+    }
+  }
 
   return (
     <View style={styles.header}>
 
       {/* Profile */}
       <TouchableOpacity style={styles.profileButton}
-      onPress={() => router.push("/account")}
+        onPress={switchViews}
+        disabled={loading}
       >
         <Ionicons name="person-circle-outline" size={28} color={colors.text} />
       </TouchableOpacity>

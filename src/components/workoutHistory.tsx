@@ -4,29 +4,53 @@ import { StyleSheet, Text, View } from "react-native";
 import { supabase } from "../../lib/supabase";
 
 type Workout = {
-    id: number;
     duration: number;
+    completed_at: string;
 };
 
 export default function WorkoutHistory() {
     const [workouts, setWorkouts] = useState<Workout[]>([]);
 
+   
+
+    //to get the data
     const getWorkouts = async () => {
         const { data, error } = await supabase
-            .from("finished_workouts")
-            .select("*")
-            .order("id", { ascending: false });
+            .from("workouts")
+            .select("duration, completed_at")
+            .order("completed_at", { ascending: false });
 
         if (error) {
-            console.log("Read error:", error);
+            console.error("Failed to fetch workout duration", error.message);
             return;
         }
 
         setWorkouts(data);
     };
 
-    useEffect(() => {getWorkouts()}, []);
 
+    //To refresh the list
+    useEffect(() => {
+        getWorkouts();
+
+        const channel = supabase
+            .channel("workouts-changes")
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "workouts" },
+                () => getWorkouts()
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, []);
+
+    useEffect(() => { getWorkouts() }, []);
+
+
+    
     const formatDuration = (totalSeconds: number) => {
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -39,15 +63,34 @@ export default function WorkoutHistory() {
         );
     };
 
+    const formatDate = (isoString: string) => {
+        const date = new Date(isoString);
+        const datePart = date.toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+        });
+        const timePart = date.toLocaleTimeString(undefined, {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+        return `${datePart}, ${timePart}`;
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Last workouts</Text>
 
-            {workouts.map((workout) => (
-                <View style={styles.workoutCard} key={workout.id}>
-                    <Text style={styles.workoutTitle}>
-                        Workout #{workout.id}
-                    </Text>
+            {workouts.map((workout, index) => (
+                <View style={styles.workoutCard} key={index}>
+                    <View style={styles.infoContainer}>
+                        <Text style={styles.workoutTitle}>
+                        Workout #{index + 1}
+                        </Text>
+
+                        <Text style={styles.date}>
+                            {formatDate(workout.completed_at)}
+                        </Text>
+                    </View>
 
                     <Text style={styles.duration}>
                         {formatDuration(workout.duration)}
@@ -63,6 +106,10 @@ const styles = StyleSheet.create({
         margin: 15,
     },
 
+    infoContainer: {
+
+    },
+
     title: {
         color: colors.text,
         fontSize: 22,
@@ -71,21 +118,33 @@ const styles = StyleSheet.create({
     },
 
     workoutCard: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
         backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.outline,
         borderRadius: 12,
         padding: 20,
         marginBottom: 10,
     },
 
     workoutTitle: {
-        color: colors.textSecondary,
-        fontSize: 14,
+        color: colors.primary,
+        fontSize: 16,
+        fontWeight: "bold",
         marginBottom: 8,
     },
 
+    date: {
+        color: colors.primary,
+        fontSize: 12,
+        marginBottom: 4,
+    },
+
     duration: {
+        backgroundColor: colors.background,
+        borderWidth: 9,
+        borderColor: colors.background,
+        borderRadius: 5,
         color: colors.text,
         fontSize: 24,
         fontWeight: "bold",

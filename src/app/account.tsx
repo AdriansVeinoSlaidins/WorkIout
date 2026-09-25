@@ -1,32 +1,23 @@
 import { colors, globalStyles } from "@/styles/global";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, } from "react-native";
-import { useAuth } from "./hooks/useAuth";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { supabase } from "../../lib/supabase";
+
 
 export default function Account() {
-
-  const { signIn } = useAuth();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please enter your email and password.");
-      return;
-    }
-
-    try {
-      await signIn(email, password);
-
-      router.replace("/(tabs)");
-
-    } catch (error: any) {
-      Alert.alert("Login failed", error.message);
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setError(error.message);
+    } else {
+      router.replace("/");
     }
   };
-
   return (
     <View style={styles.container}>
 

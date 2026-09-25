@@ -2,63 +2,33 @@ import { colors, globalStyles } from "@/styles/global";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
-  Alert,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import { useAuth } from "./hooks/useAuth";
+import { supabase } from "../../lib/supabase";
 
 export default function Signup() {
 
-  const { signUp } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [error, setError] = useState("");
+
   const handleSignup = async () => {
-
-    if (!email || !password || !confirmPassword) {
-      Alert.alert("Error", "Please fill in all fields.");
-      return;
-    }
-
     if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match.");
+      setError("Passwords don't match");
       return;
     }
-
-    if (password.length < 6) {
-      Alert.alert(
-        "Error",
-        "Password must be at least 6 characters."
-      );
-      return;
-    }
-
-    try {
-
-      const data = await signUp(email, password);
-
-      // If email confirmation is enabled in Supabase
-      if (!data.session) {
-        Alert.alert(
-          "Check your email",
-          "We sent you a confirmation email."
-        );
-
-        router.replace("/account");
-        return;
-      }
-
-      // If email confirmation isn't required
-      router.replace("/(tabs)");
-
-    } catch (error: any) {
-      Alert.alert("Signup failed", error.message);
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      setError(error.message);
+    } else {
+      router.back(); // or navigate wherever makes sense
     }
   };
 

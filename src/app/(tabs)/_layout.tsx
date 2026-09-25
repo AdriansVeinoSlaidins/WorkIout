@@ -1,11 +1,21 @@
 import HomeHeader from "@/components/HomeHeader";
 import { colors, globalStyles } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
+import { useEffect } from "react";
 import { View } from "react-native";
+import { useAuth } from "../hooks/useAuth";
 
 
 export default function TabLayout() {
+  const { session, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !session) {
+      router.replace("/account");
+    }
+}, [loading, session]);
+
     return(
       <View style={globalStyles.container}>
         
