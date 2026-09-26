@@ -58,4 +58,7 @@ export const globalStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+
+  
+
 });

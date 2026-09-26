@@ -1,7 +1,7 @@
 import { globalStyles } from "@/styles/global";
 import { Pressable, ScrollView, Text } from "react-native";
 
-export default function () {
+export default function profile() {
 
 
     const cehckUser = async () => {

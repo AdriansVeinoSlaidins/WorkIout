@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, Tabs } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 
 export default function TabLayout() {
@@ -32,27 +32,33 @@ export default function TabLayout() {
             tabBarInactiveTintColor: colors.textSecondary,
         }}
         >
-      <Tabs.Screen
-        name='index'
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => (<Ionicons name='home' size={size} color={color} />),
-        }}
-      />
-      <Tabs.Screen
-        name='workout'
-        options={{
-          title: 'Workout',
-          tabBarIcon: ({ color, size }) => (<Ionicons name='add-circle' size={size} color={color} />),
-        }}
-      />
-      <Tabs.Screen
-        name='profile'
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => (<Ionicons name='person' size={size} color={color} />),
-        }}
-      />
+        <Tabs.Screen
+          name='index'
+          options={{
+            title: 'Home',
+            tabBarIcon: ({ color, size }) => (<Ionicons name='home' size={size} color={color} />),
+          }}
+        />
+        <Tabs.Screen
+          name='workout'
+          options={{
+            title: 'Workout',
+            tabBarIcon: ({ color, size }) => (<Ionicons name='add-circle' size={size} color={color} />),
+          }}
+        />
+        <Tabs.Screen
+          name='profile'
+          options={{
+            title: 'Profile',
+            tabBarIcon: ({ color, size }) => (<Ionicons name='person' size={size} color={color} />),
+          }}
+        />
+        <Tabs.Screen
+          name="workoutList"
+          options={{
+            href: null,
+          }}
+        />
         </Tabs>
       </View>
 

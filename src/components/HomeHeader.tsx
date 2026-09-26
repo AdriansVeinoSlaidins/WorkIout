@@ -1,4 +1,4 @@
-import { useAuth } from '@/app/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 import { colors } from '@/styles/global';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';

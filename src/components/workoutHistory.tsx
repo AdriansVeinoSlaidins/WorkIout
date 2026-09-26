@@ -82,7 +82,7 @@ export default function WorkoutHistory() {
 
             {workouts.map((workout, index) => (
                 <View style={styles.workoutCard} key={index}>
-                    <View style={styles.infoContainer}>
+                    <View>
                         <Text style={styles.workoutTitle}>
                         Workout #{index + 1}
                         </Text>
@@ -106,9 +106,7 @@ const styles = StyleSheet.create({
         margin: 15,
     },
 
-    infoContainer: {
 
-    },
 
     title: {
         color: colors.text,
@@ -120,6 +118,7 @@ const styles = StyleSheet.create({
     workoutCard: {
         flexDirection: "row",
         alignItems: "center",
+        
         justifyContent: "space-between",
         backgroundColor: colors.surface,
         borderRadius: 12,

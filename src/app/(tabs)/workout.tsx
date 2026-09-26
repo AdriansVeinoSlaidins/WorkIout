@@ -1,13 +1,15 @@
-import useTimer from "@/app/hooks/workoutTimer";
 import CustomHandle from "@/components/workout-page/customHandle";
+import useTimer from "@/hooks/workoutTimer";
 import { colors, globalStyles } from "@/styles/global";
+import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 import { useMemo, useRef, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { supabase } from "../../../lib/supabase";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
-export default function () {
+export default function workout() {
     //Bottom Sheet
     const SnapPoints = useMemo(() => ["9%", "100%"], []);
     const BottomSheetRef = useRef<BottomSheet>(null);
@@ -106,7 +108,17 @@ export default function () {
             {/* Sheets Content */}
 
                 <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
-                    <Text>Yo</Text>
+                    <View style={styles.sheetContentHeader}>
+                        <Text style={[globalStyles.title, {marginLeft: 10,}]}>Add excercise</Text>
+
+                        <View style={styles.addWorkoutButton}>
+                            
+                            <TouchableOpacity onPress={() => {router.push("/workoutList")}}>
+                                <Ionicons name="add" size={35} color={"black"}/>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                
                 </BottomSheetScrollView>
             </BottomSheet>
         </>
@@ -116,8 +128,9 @@ export default function () {
 const styles = StyleSheet.create({
     contentContainer: {
         flex: 1,
-        backgroundColor: colors.background,
-        margin: 15,
+        backgroundColor: colors.surface,
+        margin: 2,
+        padding: 10,
     },
 
     handleBackground: {
@@ -134,4 +147,21 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
+
+    sheetContentHeader: {
+        padding: 10,
+        borderRadius: 10,
+        alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        backgroundColor: colors.background,
+    },
+    addWorkoutButton: {
+        
+        backgroundColor: colors.primary,
+        padding: 10,
+        borderRadius: 10,
+        
+    },
+
 });
