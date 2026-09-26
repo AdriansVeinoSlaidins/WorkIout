@@ -66,47 +66,6 @@ The project currently uses or experiments with:
 
 The exact technologies and dependencies may change as the project develops.
 
-## Project Structure
-
-The structure is still evolving, but currently looks roughly like:
-
-```text
-WorkIout/
-├── assets/
-│   └── images/
-│
-├── components/
-│   ├── HomeHeader.tsx
-│   └── workout-page/
-│
-├── lib/
-│   └── supabase.ts
-│
-├── src/
-│   └── app/
-│       ├── _layout.tsx
-│       ├── account.tsx
-│       ├── signUp.tsx
-│       │
-│       ├── hooks/
-│       │   ├── useAuth.ts
-│       │   └── workoutTimer.ts
-│       │
-│       └── (tabs)/
-│           ├── _layout.tsx
-│           ├── index.tsx
-│           ├── workout.tsx
-│           └── profile.tsx
-│
-├── styles/
-│   └── global.ts
-│
-├── app.json
-├── package.json
-└── README.md
-```
-
-This structure is **not final** and will probably change.
 
 ## Running the Project
 
