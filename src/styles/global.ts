@@ -1,14 +1,27 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const colors = {
-  background: '#1a1a2e',
-  header: '#1a1a2e',
-  surface: '#2a2a4a',
-  outline: "#ebecec",
-  primary: '#4fc3f7',
-  text: '#ffffff',
-  textSecondary: '#a0a0b0',
-  alert: '#ff5252',
+  // Main
+  background: "#111318",
+  header: "#16181D",
+  surface: "#1C1F26",
+  surfaceLight: "#242831",
+
+  // Borders
+  outline: "#30343D",
+
+  // Main accent
+  primary: "#4FC3F7",
+  primaryDark: "#2997C5",
+
+  // Text
+  text: "#FFFFFF",
+  textSecondary: "#A7ABB5",
+  textMuted: "#727782",
+
+  // Status
+  alert: "#FF5252",
+  success: "#4CAF50",
 };
 
 export const globalStyles = StyleSheet.create({
@@ -24,7 +37,6 @@ export const globalStyles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     backgroundColor: colors.primary,
-    
   },
 
   scrollviewcontainer: {
@@ -36,13 +48,13 @@ export const globalStyles = StyleSheet.create({
 
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: colors.text,
   },
 
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.textSecondary,
     marginTop: 30,
     marginBottom: 16,
@@ -54,11 +66,8 @@ export const globalStyles = StyleSheet.create({
   },
 
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-
-  
-
 });

@@ -2,7 +2,7 @@ import ExerciseWidget from '@/components/workout-page/exerciseWidget';
 import { colors, globalStyles } from '@/styles/global';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function WorkoutList() {
   return (
@@ -18,13 +18,7 @@ export default function WorkoutList() {
             <Text style={[globalStyles.title, styles.headerTitle]}>Exercises</Text>
         </View>
         
-        <ScrollView style={styles.scrollviewcontainer}>
-            
-            <ExerciseWidget/>
-
-        </ScrollView>
-        
-
+        <ExerciseWidget/>
     </View>
   )
 }

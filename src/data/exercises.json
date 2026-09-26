@@ -1,0 +1,18 @@
+[
+  {
+    "id": "bench_press",
+    "name": "Barbell Bench Press",
+    "type": "Strength",
+    "equipment": ["Barbell", "Bench"],
+    "target": ["Chest"],
+    "synergist": ["Triceps", "Front Delts"]
+  },
+  {
+    "id": "barbell_squat",
+    "name": "Barbell Squat",
+    "type": "Strength",
+    "equipment": ["Barbell"],
+    "target": ["Hips", "Thighs"],
+    "synergist": ["Adductor", "Magnus", "Soleus"]
+  }  
+]
