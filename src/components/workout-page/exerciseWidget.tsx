@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     width: 105,
     height: 105,
     borderRadius: 12,
-    backgroundColor: colors.surfaceLight,
+    backgroundColor: "white",
     marginRight: 13,
   },
 
@@ -114,10 +114,12 @@ const styles = StyleSheet.create({
   },
 
   name: {
+    flexShrink: 1,
     color: colors.text,
     fontSize: 17,
     fontWeight: "700",
     marginBottom: 6,
+    
   },
 
   typeBadge: {

@@ -14,5 +14,13 @@
     "equipment": ["Barbell"],
     "target": ["Hips", "Thighs"],
     "synergist": ["Adductor", "Magnus", "Soleus"]
-  }  
+  },
+  {
+    "id": "cable _triceps_pushdown_v-bar",
+    "name": "Cable Triceps Pushdown (V-bar)",
+    "type": "Strength",
+    "equipment": ["Cable"],
+    "target": ["Triceps", "Brachii"],
+    "synergist": ["N/A"]
+  } 
 ]

@@ -84,7 +84,16 @@ export default function workout() {
                     : exercise
             )
         );
+
+
     };
+    // Remove exercise
+    const removeExercise = (exerciseId: string) => {
+        setAddedExercises((currentExercises) =>
+            currentExercises.filter((exercise) => exercise.id !== exerciseId)
+        );
+    };
+
 
     // Finish set
     const finishSet = (exerciseId: string) => {
@@ -120,7 +129,8 @@ export default function workout() {
     const finishWorkout = async () => {
         if (!session) return;
 
-        const { data, error } = await supabase
+        // 1. Save the workout itself
+        const { data: workout, error } = await supabase
             .from("workouts")
             .insert({
                 user_id: session.user.id,
@@ -136,8 +146,33 @@ export default function workout() {
             return;
         }
 
-        console.log("Saved data:", data);
+        // 2. Flatten all exercises' sets into exercise_sets rows
+        const setsToInsert = addedExercises.flatMap((exercise) =>
+            exercise.sets.map((set, index) => ({
+                workout_id: workout.id,
+                exercise_id: exercise.id,
+                exercise_name: exercise.name,
+                reps: parseInt(set.reps, 10),
+                weight: parseFloat(set.weight),
+                order_index: index,
+            }))
+        );
 
+        // 3. Save the sets, if there are any
+        if (setsToInsert.length > 0) {
+            const { error: setsError } = await supabase
+                .from("exercise_sets")
+                .insert(setsToInsert);
+
+            if (setsError) {
+                console.error("Failed to save sets:", setsError.message);
+                return;
+            }
+        }
+
+        console.log("Saved workout:", workout);
+
+        // 4. Reset the UI
         setRunning(false);
         reset();
         setStarted(false);
@@ -244,6 +279,7 @@ export default function workout() {
                                 onWeightChange={changeWeight}
                                 onRepsChange={changeReps}
                                 onFinishSet={finishSet}
+                                onRemove={removeExercise}
                             />
                         ))
                     )}
@@ -258,6 +294,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.surface,
         padding: 10,
         paddingBottom: 40,
+        marginHorizontal: 2,
     },
 
     handleBackground: {
@@ -285,6 +322,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         backgroundColor: colors.background,
         marginBottom: 12,
+        
     },
 
     addWorkoutButton: {
@@ -296,12 +334,14 @@ const styles = StyleSheet.create({
     emptyContainer: {
         alignItems: "center",
         paddingTop: 40,
+        
     },
 
     emptyText: {
         color: colors.text,
         fontSize: 18,
         fontWeight: "bold",
+        
     },
 
     emptySubText: {

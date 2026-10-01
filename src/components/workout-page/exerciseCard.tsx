@@ -20,6 +20,7 @@ type ExerciseCardProps = {
     onWeightChange: (exerciseId: string, weight: string) => void;
     onRepsChange: (exerciseId: string, reps: string) => void;
     onFinishSet: (exerciseId: string) => void;
+    onRemove: (exerciseId: string) => void;
 };
 
 export default function ExerciseCard({
@@ -27,12 +28,20 @@ export default function ExerciseCard({
     onWeightChange,
     onRepsChange,
     onFinishSet,
+    onRemove,
 }: ExerciseCardProps) {
     return (
         <View style={styles.exerciseCard}>
-            <Text style={styles.exerciseName}>
-                {exercise.name}
-            </Text>
+            <View style={styles.cardHeader}>
+                <Text style={styles.exerciseName}>
+                    {exercise.name}
+                </Text>
+                <TouchableOpacity style={styles.Remove} onPress={() => {onRemove(exercise.id)}}>
+                    <Text>X</Text>
+                </TouchableOpacity>
+            </View>
+            
+
 
             {exercise.sets.map((set, index) => (
                 <View key={index} style={styles.finishedSet}>
@@ -178,4 +187,15 @@ const styles = StyleSheet.create({
         color: colors.textSecondary,
         marginRight: 15,
     },
+    Remove: {
+        backgroundColor: colors.primary,
+        borderRadius: 10,
+        padding: 10,
+    },
+    cardHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 10,
+    }
 });
