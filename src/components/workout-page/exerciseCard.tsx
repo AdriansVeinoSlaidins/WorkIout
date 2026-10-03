@@ -1,201 +1,142 @@
-import { colors } from "@/styles/global";
-import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-
-export type WorkoutSet = {
-    weight: string;
-    reps: string;
-};
-
-export type WorkoutExercise = {
-    id: string;
-    name: string;
-    sets: WorkoutSet[];
-    currentWeight: string;
-    currentReps: string;
-};
-
-type ExerciseCardProps = {
-    exercise: WorkoutExercise;
-    onWeightChange: (exerciseId: string, weight: string) => void;
-    onRepsChange: (exerciseId: string, reps: string) => void;
-    onFinishSet: (exerciseId: string) => void;
-    onRemove: (exerciseId: string) => void;
-};
+import { colors } from '@/styles/global'
+import { Ionicons } from '@expo/vector-icons'
+import {
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
 export default function ExerciseCard({
-    exercise,
-    onWeightChange,
-    onRepsChange,
-    onFinishSet,
-    onRemove,
-}: ExerciseCardProps) {
-    return (
-        <View style={styles.exerciseCard}>
-            <View style={styles.cardHeader}>
-                <Text style={styles.exerciseName}>
-                    {exercise.name}
-                </Text>
-                <TouchableOpacity style={styles.Remove} onPress={() => {onRemove(exercise.id)}}>
-                    <Text>X</Text>
-                </TouchableOpacity>
-            </View>
-            
+  name,
+  exerciseType,
+  target,
+  image,
+  onPress,
+  onRemove,
+}: {
+  name: string
+  exerciseType: string
+  target: string
+  image: ImageSourcePropType
+  onPress?: () => void
+  onRemove?: () => void
+}) {
+  return (
+    <TouchableOpacity style={styles.container} activeOpacity={0.8} onPress={onPress}>
+      <Image source={image} style={styles.workoutImage} resizeMode="cover" />
 
+      <View style={styles.infoContainer}>
+        <View style={styles.cardHeader}>
+          <View style={styles.typeBadge}>
+            <Text style={styles.typeText} numberOfLines={1}>
+              {exerciseType}
+            </Text>
+          </View>
 
-            {exercise.sets.map((set, index) => (
-                <View key={index} style={styles.finishedSet}>
-                    <Text style={styles.setNumber}>
-                        Set {index + 1}
-                    </Text>
-
-                    <Text style={styles.setValue}>
-                        {set.weight} kg
-                    </Text>
-
-                    <Text style={styles.setValue}>
-                        {set.reps} reps
-                    </Text>
-
-                    <Ionicons
-                        name="checkmark-circle"
-                        size={22}
-                        color={colors.success}
-                    />
-                </View>
-            ))}
-
-            <View style={styles.inputRow}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Weight"
-                    placeholderTextColor={colors.textMuted}
-                    keyboardType="numeric"
-                    value={exercise.currentWeight}
-                    onChangeText={(value) =>
-                        onWeightChange(exercise.id, value)
-                    }
-                />
-
-                <Text style={styles.unit}>kg</Text>
-
-                <TextInput
-                    style={styles.input}
-                    placeholder="Reps"
-                    placeholderTextColor={colors.textMuted}
-                    keyboardType="numeric"
-                    value={exercise.currentReps}
-                    onChangeText={(value) =>
-                        onRepsChange(exercise.id, value)
-                    }
-                />
-
-                <Text style={styles.unit}>reps</Text>
-            </View>
-
-            <TouchableOpacity
-                style={styles.finishSetButton}
-                onPress={() => onFinishSet(exercise.id)}
-            >
-                <Ionicons
-                    name="checkmark"
-                    size={20}
-                    color="white"
-                />
-
-                <Text style={styles.finishSetText}>
-                    Finish set
-                </Text>
-            </TouchableOpacity>
+          <Text
+            style={styles.workoutName}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+          >
+            {name}
+          </Text>
         </View>
-    );
+
+        <View style={styles.targetRow}>
+          <View style={styles.targetDot} />
+          <Text style={styles.targetText} numberOfLines={1}>
+            {target}
+          </Text>
+        </View>
+      </View>
+
+      {onRemove && (
+        <TouchableOpacity
+          style={styles.removeButton}
+          onPress={onRemove}
+          hitSlop={10}
+        >
+          <Ionicons name="trash-outline" size={22} color={colors.text} />
+        </TouchableOpacity>
+      )}
+    </TouchableOpacity>
+  )
 }
 
 const styles = StyleSheet.create({
-    exerciseCard: {
-        backgroundColor: colors.background,
-        borderRadius: 12,
-        padding: 15,
-        marginBottom: 12,
-        borderWidth: 1,
-        borderColor: colors.outline,
-    },
-
-    exerciseName: {
-        color: colors.text,
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 12,
-    },
-
-    inputRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginTop: 10,
-    },
-
-    input: {
-        flex: 1,
-        backgroundColor: colors.surfaceLight,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: colors.outline,
-        color: colors.text,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        fontSize: 15,
-    },
-
-    unit: {
-        color: colors.textSecondary,
-        marginHorizontal: 6,
-    },
-
-    finishSetButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: colors.primary,
-        borderRadius: 8,
-        padding: 11,
-        marginTop: 12,
-    },
-
-    finishSetText: {
-        color: "white",
-        fontSize: 15,
-        fontWeight: "bold",
-        marginLeft: 6,
-    },
-
-    finishedSet: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: colors.surfaceLight,
-        borderRadius: 8,
-        padding: 9,
-        marginBottom: 6,
-    },
-
-    setNumber: {
-        color: colors.text,
-        fontWeight: "bold",
-        width: 55,
-    },
-
-    setValue: {
-        color: colors.textSecondary,
-        marginRight: 15,
-    },
-    Remove: {
-        backgroundColor: colors.primary,
-        borderRadius: 10,
-        padding: 10,
-    },
-    cardHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: 10,
-    }
-});
+  container: {
+    marginTop: 10,
+    borderRadius: 16,
+    padding: 8,
+    height: 106,
+    flexDirection: 'row',
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.surfaceLight,
+    elevation: 4,
+  },
+  workoutImage: {
+    width: 90,
+    height: 90,
+    borderRadius: 12,
+    backgroundColor: 'white',
+  },
+  infoContainer: {
+    flex: 1,
+    marginLeft: 12,
+    marginRight: 4,
+    justifyContent: 'center',
+    gap: 10,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  typeBadge: {
+    backgroundColor: colors.primaryDark,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  typeText: {
+    color: colors.text,
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
+  workoutName: {
+    flex: 1,
+    color: colors.text,
+    fontSize: 20,
+    fontWeight: '800',
+    letterSpacing: 0.2,
+  },
+  targetRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  targetDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.primaryDark,
+  },
+  targetText: {
+    flex: 1,
+    color: colors.text,
+    opacity: 0.7,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  removeButton: {
+    justifyContent: 'center',
+    paddingHorizontal: 6,
+  },
+})

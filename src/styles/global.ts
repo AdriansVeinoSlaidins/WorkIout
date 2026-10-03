@@ -4,11 +4,13 @@ export const colors = {
   // Main
   background: "#111318",
   header: "#16181D",
+  surfaceDark: "#0b0b0e",
   surface: "#1C1F26",
   surfaceLight: "#242831",
 
   // Borders
   outline: "#30343D",
+  outlineWhite: "#d8d8d8",
 
   // Main accent
   primary: "#4FC3F7",
@@ -28,6 +30,9 @@ export const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.surfaceLight,
+    elevation: 4,
     paddingTop: 30,
   },
 
@@ -35,6 +40,9 @@ export const globalStyles = StyleSheet.create({
     marginTop: 15,
     padding: 15,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.outlineWhite,
+    elevation: 4,
     alignItems: "center",
     backgroundColor: colors.primary,
   },

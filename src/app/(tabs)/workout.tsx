@@ -1,14 +1,14 @@
 import CustomHandle from "@/components/workout-page/customHandle";
-import ExerciseCard, {
-    WorkoutExercise,
-} from "@/components/workout-page/exerciseCard";
-import exercises from "@/data/exercises.json";
+import ExerciseCard from "@/components/workout-page/exerciseCard";
+import ExerciseSets from "@/components/workout-page/exerciseSets";
+import { useWorkout } from "@/context/workoutContext";
+import { exerciseImages } from "@/data/exerciseImages";
 import useTimer from "@/hooks/workoutTimer";
 import { colors, globalStyles } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, } from "react-native";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
@@ -30,102 +30,32 @@ export default function workout() {
     const [running, setRunning] = useState(false);
     const { time, reset, seconds } = useTimer(running);
 
-    // Selected exercise
-    const { exerciseId } = useLocalSearchParams();
+    // Selected exercises (shared with the workoutList screen)
+    const {
+        selectedExercises,
+        removeExercise,
+        clearExercises,
+        addSet,
+        removeSet,
+        updateSet,
+    } = useWorkout();
 
-    const selectedExerciseId = Array.isArray(exerciseId)
-        ? exerciseId[0]
-        : exerciseId;
+    
 
-    const exercise = exercises.find(
-        (item) => item.id === selectedExerciseId
-    );
-
-    // Exercises added to workout
-    const [addedExercises, setAddedExercises] = useState<WorkoutExercise[]>([]);
-
-    useEffect(() => {
-        if (!exercise) return;
-
-        setAddedExercises((currentExercises) => {
-            if (currentExercises.some((item) => item.id === exercise.id)) {
-                return currentExercises;
-            }
-
-            return [
-                ...currentExercises,
-                {
-                    ...exercise,
-                    sets: [],
-                    currentWeight: "",
-                    currentReps: "",
-                },
-            ];
-        });
-    }, [selectedExerciseId]);
-
-    // Change weight
-    const changeWeight = (exerciseId: string, weight: string) => {
-        setAddedExercises((currentExercises) =>
-            currentExercises.map((exercise) =>
-                exercise.id === exerciseId
-                    ? { ...exercise, currentWeight: weight }
-                    : exercise
-            )
-        );
-    };
-
-    // Change reps
-    const changeReps = (exerciseId: string, reps: string) => {
-        setAddedExercises((currentExercises) =>
-            currentExercises.map((exercise) =>
-                exercise.id === exerciseId
-                    ? { ...exercise, currentReps: reps }
-                    : exercise
-            )
-        );
-
-
-    };
-    // Remove exercise
-    const removeExercise = (exerciseId: string) => {
-        setAddedExercises((currentExercises) =>
-            currentExercises.filter((exercise) => exercise.id !== exerciseId)
-        );
-    };
-
-
-    // Finish set
-    const finishSet = (exerciseId: string) => {
-        setAddedExercises((currentExercises) =>
-            currentExercises.map((exercise) => {
-                if (exercise.id !== exerciseId) {
-                    return exercise;
-                }
-
-                if (!exercise.currentWeight || !exercise.currentReps) {
-                    return exercise;
-                }
-
-                return {
-                    ...exercise,
-                    sets: [
-                        ...exercise.sets,
-                        {
-                            weight: exercise.currentWeight,
-                            reps: exercise.currentReps,
-                        },
-                    ],
-                    currentWeight: "",
-                    currentReps: "",
-                };
-            })
-        );
-    };
+    // Get pressed workout
+    const { name, exerciseType, bodyPart, target } = useLocalSearchParams<{
+        name?: string,
+        exerciseType?: string,
+        bodyPart?: string,
+        target?: string
+    }>()
+    
 
     // Database
     const { session } = useAuth();
 
+
+    // Get pressed workout
     const finishWorkout = async () => {
         if (!session) return;
 
@@ -146,38 +76,39 @@ export default function workout() {
             return;
         }
 
-        // 2. Flatten all exercises' sets into exercise_sets rows
-        const setsToInsert = addedExercises.flatMap((exercise) =>
-            exercise.sets.map((set, index) => ({
-                workout_id: workout.id,
-                exercise_id: exercise.id,
-                exercise_name: exercise.name,
-                reps: parseInt(set.reps, 10),
-                weight: parseFloat(set.weight),
-                order_index: index,
-            }))
-        );
+        // 2. Save the selected exercises, linked to that workout
+        if (selectedExercises.length > 0) {
+            const rows = selectedExercises.flatMap((exercise, exerciseIndex) =>
+                exercise.sets.map((set, setIndex) => ({
+                    workout_id: workout.id,
+                    exercise_id: exercise.id,
+                    name: exercise.name,
+                    type: exercise.type,
+                    target: exercise.target,
+                    position: exerciseIndex,      // order of the exercise in the workout
+                    set_number: setIndex + 1,     // order of the set within the exercise
+                    reps: set.reps ? parseInt(set.reps, 10) : null,
+                    weight: set.weight ? parseFloat(set.weight) : null,
+                }))
+            );
 
-        // 3. Save the sets, if there are any
-        if (setsToInsert.length > 0) {
-            const { error: setsError } = await supabase
-                .from("exercise_sets")
-                .insert(setsToInsert);
+            const { error: exercisesError } = await supabase
+                .from("workout_exercises")
+                .insert(rows);
 
-            if (setsError) {
-                console.error("Failed to save sets:", setsError.message);
+            if (exercisesError) {
+                console.error("Failed to save exercises:", exercisesError.message);
                 return;
             }
         }
 
         console.log("Saved workout:", workout);
 
-        // 4. Reset the UI
+        // 3. Reset the UI
         setRunning(false);
         reset();
         setStarted(false);
-        setAddedExercises([]);
-
+        clearExercises();
         BottomSheetRef.current?.close();
     };
 
@@ -229,19 +160,12 @@ export default function workout() {
             >
                 <BottomSheetScrollView
                     contentContainerStyle={styles.contentContainer}
+                    showsVerticalScrollIndicator={false}
                 >
                     {/* Header */}
 
                     <View style={styles.sheetContentHeader}>
-                        <Text
-                            style={[
-                                globalStyles.title,
-                                {
-                                    marginLeft: 10,
-                                    fontSize: 22,
-                                },
-                            ]}
-                        >
+                        <Text style={[ globalStyles.title,{ marginLeft: 10, fontSize: 22, },]}>
                             Workout
                         </Text>
 
@@ -251,38 +175,42 @@ export default function workout() {
                                 router.push("/workoutList");
                             }}
                         >
-                            <Ionicons
-                                name="add"
-                                size={35}
-                                color="black"
-                            />
+                            <Ionicons name="add" size={35} color="black"/>
                         </TouchableOpacity>
                     </View>
+                    
+                    {/* selected exercises */}
 
-                    {/* Exercises */}
-
-                    {addedExercises.length === 0 ? (
+                    {selectedExercises.length === 0? (
                         <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>
-                                No exercises added
-                            </Text>
-
+                            <Text style={styles.emptyText}>No exercises yet</Text>
                             <Text style={styles.emptySubText}>
-                                Press + to add an exercise
+                                Tap + to add your first exercise
                             </Text>
                         </View>
-                    ) : (
-                        addedExercises.map((exercise) => (
-                            <ExerciseCard
-                                key={exercise.id}
-                                exercise={exercise}
-                                onWeightChange={changeWeight}
-                                onRepsChange={changeReps}
-                                onFinishSet={finishSet}
-                                onRemove={removeExercise}
-                            />
+                    ):(
+                        selectedExercises.map((exercise) => (
+                            <View key={exercise.id}>
+                                <ExerciseCard
+                                    name={exercise.name}
+                                    exerciseType={exercise.type}
+                                    target={exercise.target}
+                                    image={exerciseImages[exercise.id]}
+                                    onRemove={() => removeExercise(exercise.id)}
+                                />
+                                <ExerciseSets
+                                    sets={exercise.sets}
+                                    onAdd={() => addSet(exercise.id)}
+                                    onRemove={(setId) => removeSet(exercise.id, setId)}
+                                    onChange={(setId, field, value) =>
+                                        updateSet(exercise.id, setId, field, value)
+                                    }
+                                />
+                            </View> 
                         ))
                     )}
+                    
+
                 </BottomSheetScrollView>
             </BottomSheet>
         </>
@@ -322,13 +250,18 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         backgroundColor: colors.background,
         marginBottom: 12,
-        
+        borderWidth: 1,
+        borderColor: colors.surfaceLight,
+        elevation: 4,
     },
 
     addWorkoutButton: {
         backgroundColor: colors.primary,
         padding: 10,
         borderRadius: 10,
+        borderWidth: 1,
+        borderColor: colors.surface ,
+        elevation: 4,
     },
 
     emptyContainer: {
@@ -348,4 +281,34 @@ const styles = StyleSheet.create({
         color: colors.textMuted,
         marginTop: 6,
     },
+    exerciseRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+    },
+
+    exerciseInfo: {
+        flex: 1,
+    },
+
+    exerciseName: {
+        color: colors.text,
+        fontSize: 18,
+        fontWeight: "800",
+    },
+
+    exerciseTarget: {
+        color: colors.textMuted,
+        fontSize: 13,
+        marginTop: 2,
+    },
+    exercireCard: {
+        flexDirection: "column",
+        backgroundColor: colors.background,
+        borderRadius: 12,
+        padding: 12,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: colors.surfaceLight,
+    }
 });

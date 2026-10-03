@@ -1,3 +1,4 @@
+import { WorkoutProvider } from "@/context/workoutContext";
 import { colors } from "@/styles/global";
 import { Stack } from "expo-router";
 import { AppState } from "react-native";
@@ -17,6 +18,7 @@ export default function RootLayout() {
 });
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <WorkoutProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
 
@@ -51,6 +53,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
+      </WorkoutProvider>
     </GestureHandlerRootView>
   );
 }

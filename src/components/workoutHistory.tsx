@@ -1,43 +1,100 @@
+import { useAuth } from "@/hooks/useAuth";
 import { colors } from "@/styles/global";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { supabase } from "../../lib/supabase";
 
+type SetRow = {
+    exercise_id: string;
+    name: string;
+    position: number;
+    set_number: number;
+    reps: number | null;
+    weight: number | null;
+};
+
 type Workout = {
+    id: string;
     duration: number;
     completed_at: string;
+    workout_exercises: SetRow[];
+};
+
+type GroupedExercise = {
+    key: string;
+    name: string;
+    sets: SetRow[];
+};
+
+// Turns the flat set rows into one entry per exercise, in workout order
+const groupExercises = (rows: SetRow[]): GroupedExercise[] => {
+    const sorted = [...rows].sort(
+        (a, b) => a.position - b.position || a.set_number - b.set_number
+    );
+
+    const groups: GroupedExercise[] = [];
+    for (const row of sorted) {
+        const key = `${row.position}-${row.exercise_id}`;
+        const existing = groups.find((g) => g.key === key);
+        if (existing) {
+            existing.sets.push(row);
+        } else {
+            groups.push({ key, name: row.name, sets: [row] });
+        }
+    }
+    return groups;
 };
 
 export default function WorkoutHistory() {
     const [workouts, setWorkouts] = useState<Workout[]>([]);
+    const { session } = useAuth();
+    const userId = session?.user.id;
 
-   
+    const getWorkouts = useCallback(async () => {
+        if (!userId) return;
 
-    //to get the data
-    const getWorkouts = async () => {
         const { data, error } = await supabase
             .from("workouts")
-            .select("duration, completed_at")
+            .select(`
+                id,
+                duration,
+                completed_at,
+                workout_exercises (
+                    exercise_id,
+                    name,
+                    position,
+                    set_number,
+                    reps,
+                    weight
+                )
+            `)
+            .eq("user_id", userId)
             .order("completed_at", { ascending: false });
 
         if (error) {
-            console.error("Failed to fetch workout duration", error.message);
+            console.error("Failed to fetch workouts", error.message);
             return;
         }
 
-        setWorkouts(data);
-    };
+        setWorkouts((data ?? []) as Workout[]);
+    }, [userId]);
 
-
-    //To refresh the list
+    // Load once and refresh when either table changes
     useEffect(() => {
+        if (!userId) return;
+
         getWorkouts();
 
         const channel = supabase
-            .channel("workouts-changes")
+            .channel(`workouts-changes-${userId}`)
             .on(
                 "postgres_changes",
                 { event: "*", schema: "public", table: "workouts" },
+                () => getWorkouts()
+            )
+            .on(
+                "postgres_changes",
+                { event: "*", schema: "public", table: "workout_exercises" },
                 () => getWorkouts()
             )
             .subscribe();
@@ -45,12 +102,11 @@ export default function WorkoutHistory() {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, []);
+    }, [userId, getWorkouts]);
 
-    useEffect(() => { getWorkouts() }, []);
+    // Early return goes AFTER all hooks
+    if (!session) return null;
 
-
-    
     const formatDuration = (totalSeconds: number) => {
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -80,23 +136,49 @@ export default function WorkoutHistory() {
         <View style={styles.container}>
             <Text style={styles.title}>Last workouts</Text>
 
-            {workouts.map((workout, index) => (
-                <View style={styles.workoutCard} key={index}>
-                    <View>
-                        <Text style={styles.workoutTitle}>
-                        Workout #{index + 1}
-                        </Text>
+            {workouts.map((workout, index) => {
+                const exercises = groupExercises(workout.workout_exercises ?? []);
 
-                        <Text style={styles.date}>
-                            {formatDate(workout.completed_at)}
-                        </Text>
+                return (
+                    <View key={workout.id} style={styles.lastWorkoutContainer}>
+                        <View style={styles.workoutCard}>
+                            <View>
+                                <Text style={styles.workoutTitle}>
+                                    Workout #{workouts.length - index}
+                                </Text>
+
+                                <Text style={styles.date}>
+                                    {formatDate(workout.completed_at)}
+                                </Text>
+                            </View>
+                            <Text style={styles.duration}>
+                                {formatDuration(workout.duration)}
+                            </Text>
+                        </View>
+
+                        {exercises.length > 0 && (
+                            <View style={styles.exerciseList}>
+                                {exercises.map((exercise) => (
+                                    <View key={exercise.key} style={styles.exerciseBlock}>
+                                        <Text style={styles.exerciseName}>
+                                            {exercise.name}
+                                        </Text>
+                                        {exercise.sets.map((set) => (
+                                            <Text
+                                                key={set.set_number}
+                                                style={styles.setText}
+                                            >
+                                                Set {set.set_number}:{" "}
+                                                {set.weight ?? 0} kg × {set.reps ?? 0}
+                                            </Text>
+                                        ))}
+                                    </View>
+                                ))}
+                            </View>
+                        )}
                     </View>
-
-                    <Text style={styles.duration}>
-                        {formatDuration(workout.duration)}
-                    </Text>
-                </View>
-            ))}
+                );
+            })}
         </View>
     );
 }
@@ -104,9 +186,17 @@ export default function WorkoutHistory() {
 const styles = StyleSheet.create({
     container: {
         margin: 15,
+        
     },
-
-
+    lastWorkoutContainer: {
+        backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.surfaceLight,
+        elevation: 4,
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 10,
+    },
 
     title: {
         color: colors.text,
@@ -118,12 +208,7 @@ const styles = StyleSheet.create({
     workoutCard: {
         flexDirection: "row",
         alignItems: "center",
-        
         justifyContent: "space-between",
-        backgroundColor: colors.surface,
-        borderRadius: 12,
-        padding: 20,
-        marginBottom: 10,
     },
 
     workoutTitle: {
@@ -147,5 +232,25 @@ const styles = StyleSheet.create({
         color: colors.text,
         fontSize: 24,
         fontWeight: "bold",
+    },
+
+    exerciseList: {
+        marginTop: 12,
+        paddingTop: 12,
+        borderTopWidth: 1,
+        borderTopColor: colors.surfaceLight,
+        gap: 10,
+    },
+    exerciseBlock: {
+        gap: 2,
+    },
+    exerciseName: {
+        color: colors.text,
+        fontSize: 15,
+        fontWeight: "800",
+    },
+    setText: {
+        color: colors.textMuted,
+        fontSize: 13,
     },
 });

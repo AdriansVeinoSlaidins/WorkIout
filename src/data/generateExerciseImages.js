@@ -17,7 +17,7 @@ const imageFiles = files.filter(
   (file) => file.toLowerCase().endsWith(".png")
 );
 
-let output = `export const exerciseImages = {\n`;
+let output = `import { ImageSourcePropType } from 'react-native' \nexport const exerciseImages: Record<string, ImageSourcePropType> = {\n`;
 
 for (const file of imageFiles) {
   const id = path.basename(file, path.extname(file));
