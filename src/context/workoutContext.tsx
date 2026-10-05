@@ -4,6 +4,7 @@ export type ExerciseSet = {
   id: string
   reps: string
   weight: string
+  done: boolean
 }
 
 export type SelectedExercise = {
@@ -27,6 +28,7 @@ type WorkoutContextType = {
     field: 'reps' | 'weight',
     value: string
   ) => void
+  toggleSetDone: (exerciseId: string, setId: string) => void
 }
 
 const WorkoutContext = createContext<WorkoutContextType | null>(null)
@@ -35,6 +37,7 @@ const makeSet = (): ExerciseSet => ({
   id: Math.random().toString(36).slice(2),
   reps: '',
   weight: '',
+  done: false,
 })
 
 export function WorkoutProvider({ children }: { children: ReactNode }) {
@@ -54,9 +57,7 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
 
   const clearExercises = useCallback(() => setSelectedExercises([]), [])
 
-  const addSet = useCallback((exerciseId: string) => {
-    setSelectedExercises((prev) =>
-      prev.map((e) =>
+  const addSet = useCallback((exerciseId: string) => {setSelectedExercises((prev) => prev.map((e) =>
         e.id === exerciseId ? { ...e, sets: [...e.sets, makeSet()] } : e
       )
     )
@@ -64,10 +65,7 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
 
   const removeSet = useCallback((exerciseId: string, setId: string) => {
     setSelectedExercises((prev) =>
-      prev.map((e) =>
-        e.id === exerciseId
-          ? { ...e, sets: e.sets.filter((s) => s.id !== setId) }
-          : e
+      prev.map((e) => e.id === exerciseId ? { ...e, sets: e.sets.filter((s) => s.id !== setId) } : e
       )
     )
   }, [])
@@ -89,6 +87,20 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
     },
     []
   )
+  const toggleSetDone = useCallback((exerciseId: string, setId: string) => {
+    setSelectedExercises((prev) =>
+      prev.map((e) =>
+        e.id === exerciseId
+          ? {
+              ...e,
+              sets: e.sets.map((s) =>
+                s.id === setId ? { ...s, done: !s.done } : s
+              ),
+            }
+          : e
+      )
+    )
+  }, [])
 
   return (
     <WorkoutContext.Provider
@@ -100,6 +112,7 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
         addSet,
         removeSet,
         updateSet,
+        toggleSetDone
       }}
     >
       {children}

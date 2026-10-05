@@ -9,11 +9,13 @@ export default function ExerciseSets({
   onAdd,
   onRemove,
   onChange,
+  onToggleDone
 }: {
   sets: ExerciseSet[]
   onAdd: () => void
   onRemove: (setId: string) => void
   onChange: (setId: string, field: 'reps' | 'weight', value: string) => void
+  onToggleDone: (setId: string) => void
 }) {
   return (
     <View style={styles.container}>
@@ -48,20 +50,29 @@ export default function ExerciseSets({
             placeholderTextColor={colors.textMuted}
             selectTextOnFocus
           />
-
-          <TouchableOpacity
-            style={styles.deleteCol}
-            onPress={() => onRemove(set.id)}
-            hitSlop={8}
-            disabled={sets.length === 1} // always keep at least one set
-          >
-            <Ionicons
-              name="close-circle"
-              size={22}
-              color={colors.text}
-              style={{ opacity: sets.length === 1 ? 0.2 : 0.7 }}
-            />
-          </TouchableOpacity>
+          <View style={styles.actionCol}>
+            <TouchableOpacity
+              style={styles.deleteCol}
+              onPress={() => onRemove(set.id)}
+              hitSlop={8}
+              disabled={sets.length === 1} // always keep at least one set
+            >
+              <Ionicons
+                name="close-circle"
+                size={25}
+                color={colors.text}
+                style={{ opacity: sets.length === 1 ? 0.2 : 0.7 }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => onToggleDone(set.id)} hitSlop={8}>
+              <Ionicons
+                name={set.done ? "checkmark-circle" : "checkmark-circle-outline"}
+                size={25}
+                color={set.done ? colors.success : colors.text}
+              />
+            </TouchableOpacity>
+          </View>
+          
         </View>
       ))}
 
@@ -102,7 +113,13 @@ const styles = StyleSheet.create({
   },
   deleteCol: {
     width: 24,
+    marginBottom: 5,
     alignItems: 'center',
+  },
+  actionCol: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center"
   },
   headerText: {
     color: colors.textMuted,

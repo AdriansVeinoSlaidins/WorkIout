@@ -3,6 +3,7 @@ import ExerciseCard from "@/components/workout-page/exerciseCard";
 import ExerciseSets from "@/components/workout-page/exerciseSets";
 import { useWorkout } from "@/context/workoutContext";
 import { exerciseImages } from "@/data/exerciseImages";
+import useRestTimer from "@/hooks/workoutRestTimer";
 import useTimer from "@/hooks/workoutTimer";
 import { colors, globalStyles } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,6 +13,7 @@ import { useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, } from "react-native";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
+
 
 export default function workout() {
     // Bottom Sheet
@@ -30,7 +32,10 @@ export default function workout() {
     const [running, setRunning] = useState(false);
     const { time, reset, seconds } = useTimer(running);
 
-    // Selected exercises (shared with the workoutList screen)
+    //Rest timer
+    const rest = useRestTimer(10);
+
+    // Selected exercises
     const {
         selectedExercises,
         removeExercise,
@@ -38,6 +43,7 @@ export default function workout() {
         addSet,
         removeSet,
         updateSet,
+        toggleSetDone,
     } = useWorkout();
 
     
@@ -85,8 +91,8 @@ export default function workout() {
                     name: exercise.name,
                     type: exercise.type,
                     target: exercise.target,
-                    position: exerciseIndex,      // order of the exercise in the workout
-                    set_number: setIndex + 1,     // order of the set within the exercise
+                    position: exerciseIndex,
+                    set_number: setIndex + 1,
                     reps: set.reps ? parseInt(set.reps, 10) : null,
                     weight: set.weight ? parseFloat(set.weight) : null,
                 }))
@@ -154,6 +160,8 @@ export default function workout() {
                         bottomSheetRef={BottomSheetRef}
                         sheetIndex={sheetIndex}
                         time={time}
+                        restTime={rest.running ? rest.time : "Rest"}
+                        restRunning={rest.running}
                         onFinish={finishWorkout}
                     />
                 )}
@@ -205,6 +213,11 @@ export default function workout() {
                                     onChange={(setId, field, value) =>
                                         updateSet(exercise.id, setId, field, value)
                                     }
+                                    onToggleDone={(setId) => {
+                                        const set = exercise.sets.find((s) => s.id === setId);
+                                        toggleSetDone(exercise.id, setId);
+                                        if (set && !set.done) rest.start();
+                                    }}
                                 />
                             </View> 
                         ))

@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { useBottomSheet } from "@gorhom/bottom-sheet";
 import { RefObject } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 import Animated, {
     Extrapolation,
     interpolate,
@@ -13,11 +14,15 @@ export default function CustomHandle({
     bottomSheetRef,
     sheetIndex,
     time,
+    restTime,
+    restRunning,
     onFinish,
 }: {
     bottomSheetRef: RefObject<BottomSheet | null>;
     sheetIndex: number;
     time: string;
+    restTime: string;
+    restRunning: boolean;
     onFinish: () => void;
 }) {
     const { animatedIndex } = useBottomSheet(); // continuous, live drag value
@@ -61,7 +66,9 @@ export default function CustomHandle({
 
                 {/* Timer */}
 
-                <Text style={styles.timer}>{time}</Text>
+                <Text style={styles.timer}>{restRunning ? restTime : time}</Text>
+                
+                
                 
                 {/* Finish workout button */}
 
