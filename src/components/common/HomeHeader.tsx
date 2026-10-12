@@ -1,26 +1,44 @@
+import { useAuth } from '@/hooks/useAuth';
 import { colors } from '@/styles/global';
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeHeader() {
+  const { session, loading } = useAuth();
+
+  const switchViews = () => {
+    if (!loading && session) {
+      router.replace("/profile");
+    } else {
+      router.push("/account")
+    }
+  }
+  const switchToSettings = () => {
+    router.push("/settings" as any)
+  }
+
   return (
     <View style={styles.header}>
 
       {/* Profile */}
-      <Pressable style={styles.profileButton}>
+      <TouchableOpacity style={styles.profileButton}
+        onPress={switchViews}
+        disabled={loading}
+      >
         <Ionicons name="person-circle-outline" size={28} color={colors.text} />
-      </Pressable>
+      </TouchableOpacity>
 
       {/* Streak */}
-      <Pressable style={styles.streakButton}>
+      <TouchableOpacity style={styles.streakButton}>
         <Ionicons name="flame" size={22} color={colors.text} />
         <Text style={styles.streak}>12</Text>
-      </Pressable>
+      </TouchableOpacity>
 
       {/* Settings */}
-      <Pressable style={styles.settingsButton}>
+      <TouchableOpacity style={styles.settingsButton} onPress={switchToSettings}>
         <Ionicons name="settings-outline" size={24} color={colors.text} />
-      </Pressable>
+      </TouchableOpacity>
 
     </View>
   );

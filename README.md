@@ -2,9 +2,6 @@
 
 > !!! **Experimental / learning project - very much a work in progress** !!!
 
-
-> !!! **This README is referencing the feature/workoutlogic branch** !!!
-
 WorkIout is a personal project I'm building while learning **React Native, Expo, Expo Router, Supabase, and mobile app development**.
 
 This is **not a finished or production-ready application**. Most of the project is currently experimental, and functionality, UI, database structure, and code organization are likely to change as I learn.

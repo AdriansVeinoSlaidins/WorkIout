@@ -1,19 +1,23 @@
-import Button from "@/components/Button";
-import { colors, globalStyles } from "@/styles/global";
-import { ScrollView } from "react-native";
+import { globalStyles } from "@/styles/global";
+import { Pressable, ScrollView, Text } from "react-native";
+
+export default function profile() {
 
 
-export default function () {
+    const cehckUser = async () => {
+        
+    }
+
     return (
         <ScrollView style={globalStyles.scrollviewcontainer}>
-                        <Button 
-                            labeltext="Test"
-                            color={colors.primary}
-                            OnPress={() => {
-                                console.log("Test Pressed");
-                            }}
-                            />
+
+            <Text>Yo</Text>
+
+
+            <Pressable onPress={cehckUser}>
+                <Text>Check what user loged in</Text>
+            </Pressable>
 
         </ScrollView>
-    )
+    );
 }
