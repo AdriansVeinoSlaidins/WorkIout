@@ -8,15 +8,14 @@ export default function SettingsLayout() {
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.header
-          
         },
-        headerTintColor: "#ffffff",
+        headerTintColor: colors.text,
         headerTitleStyle: {
           fontWeight: "bold",
         },
       }}
     >
-        <Stack.Screen name="index" options={{ title: "Settings" }} /> 
+        <Stack.Screen name="index" options={{ title: "Settings" } } /> 
         <Stack.Screen name="themes" options={{ title: "Themes" }} />
         <Stack.Screen name="units" options={{ title: "Units" }} />
         <Stack.Screen name="languages" options={{ title: "Languages" }} />

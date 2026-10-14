@@ -1,8 +1,8 @@
-import { useThemedStyles } from '@/context/themeContext';
+import { useTheme, useThemedStyles } from '@/context/themeContext';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeColors } from '@/styles/global';
 import { Ionicons } from '@expo/vector-icons';
-import { router, useTheme } from 'expo-router';
+import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeHeader() {

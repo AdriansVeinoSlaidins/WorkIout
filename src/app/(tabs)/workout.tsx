@@ -123,6 +123,11 @@ export default function workout() {
         BottomSheetRef.current?.close();
     };
 
+    // rest timer
+    const onRestTimePress = () => {
+        router.push("/restTimerSettings")
+    } 
+
     return (
         <>
             {/* Main page */}
@@ -168,6 +173,7 @@ export default function workout() {
                         restTime={rest.running ? rest.time : "Rest"}
                         restRunning={rest.running}
                         onFinish={finishWorkout}
+                        onRestTimePress={onRestTimePress}
                     />
                 )}
             >
