@@ -1,9 +1,11 @@
 import SettingsButtons from '@/components/settings-page/SettingsButtons'
-import { colors } from '@/styles/global'
+import { useThemedStyles } from '@/context/themeContext'
+import { ThemeColors } from '@/styles/global'
 import { router } from 'expo-router'
 import { ScrollView, StyleSheet } from 'react-native'
 
 export default function index() {
+  const styles = useThemedStyles(createStyles)
   return (
     <ScrollView style={styles.container}>
         <SettingsButtons buttonName='Themes' onPress={() => {router.push("/settings/themes")}} iconName='color-palette-outline'></SettingsButtons>
@@ -15,7 +17,7 @@ export default function index() {
 }
 
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,

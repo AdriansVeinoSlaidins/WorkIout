@@ -1,4 +1,5 @@
-import { colors, globalStyles } from "@/styles/global";
+import { useTheme, useThemedStyles } from "@/context/themeContext";
+import { createGlobalStyles, ThemeColors } from "@/styles/global";
 import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -9,7 +10,9 @@ export default function Account() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("");
-
+  const {colors} = useTheme()
+  const styles = useThemedStyles(createStyles)
+  const globalStyles = useThemedStyles(createGlobalStyles)
   const handleLogin = async () => {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
@@ -75,7 +78,7 @@ export default function Account() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,

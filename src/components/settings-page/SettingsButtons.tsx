@@ -1,4 +1,5 @@
-import { colors } from '@/styles/global';
+import { useTheme, useThemedStyles } from '@/context/themeContext';
+import { ThemeColors } from '@/styles/global';
 import { Ionicons } from '@expo/vector-icons';
 import { ComponentProps } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -12,10 +13,11 @@ export default function settingsButtons({
     iconName: ComponentProps<typeof Ionicons>["name"],
     onPress: () => void,
 }) {
-
-  return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-        <View style={styles.buttonInfo}>
+    const {colors} = useTheme()
+    const styles = useThemedStyles(createStyles)
+    return (
+        <TouchableOpacity style={styles.container} onPress={onPress}>
+            <View style={styles.buttonInfo}>
             <Text style={styles.text}>{buttonName}</Text>
             <Ionicons name={iconName} size={30} color={colors.text}/>
         </View>
@@ -27,7 +29,7 @@ export default function settingsButtons({
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: "row",

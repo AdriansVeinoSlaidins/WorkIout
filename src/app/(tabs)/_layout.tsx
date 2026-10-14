@@ -1,5 +1,6 @@
 import HomeHeader from "@/components/common/HomeHeader";
-import { colors, globalStyles } from "@/styles/global";
+import { useTheme, useThemedStyles } from "@/context/themeContext";
+import { createGlobalStyles } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Tabs } from "expo-router";
 import { useEffect } from "react";
@@ -15,7 +16,8 @@ export default function TabLayout() {
       router.replace("/account");
     }
 }, [loading, session]);
-
+    const {colors} = useTheme()
+    const globalStyles = useThemedStyles(createGlobalStyles)
     return(
       <View style={globalStyles.container}>
         

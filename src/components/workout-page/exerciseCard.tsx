@@ -1,4 +1,6 @@
-import { colors } from '@/styles/global'
+
+import { useTheme, useThemedStyles } from '@/context/themeContext'
+import { ThemeColors } from '@/styles/global'
 import { Ionicons } from '@expo/vector-icons'
 import {
   Image,
@@ -24,6 +26,8 @@ export default function ExerciseCard({
   onPress?: () => void
   onRemove?: () => void
 }) {
+  const {colors} = useTheme()
+  const styles = useThemedStyles(createStyles)
   return (
     <TouchableOpacity style={styles.container} activeOpacity={0.8} onPress={onPress}>
       <Image source={image} style={styles.workoutImage} resizeMode="cover" />
@@ -67,7 +71,7 @@ export default function ExerciseCard({
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     marginTop: 10,
     borderRadius: 16,

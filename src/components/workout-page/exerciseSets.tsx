@@ -1,5 +1,6 @@
+import { useTheme, useThemedStyles } from '@/context/themeContext'
 import { ExerciseSet } from '@/context/workoutContext'
-import { colors } from '@/styles/global'
+import { ThemeColors } from '@/styles/global'
 import { Ionicons } from '@expo/vector-icons'
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
@@ -17,6 +18,8 @@ export default function ExerciseSets({
   onChange: (setId: string, field: 'reps' | 'weight', value: string) => void
   onToggleDone: (setId: string) => void
 }) {
+  const {colors} = useTheme()
+  const styles = useThemedStyles(createStyles)
   return (
     <View style={styles.container}>
       {/* Column titles */}
@@ -84,7 +87,7 @@ export default function ExerciseSets({
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     backgroundColor: colors.background,
     borderBottomLeftRadius: 16,

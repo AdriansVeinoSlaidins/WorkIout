@@ -1,8 +1,10 @@
 import ExerciseCard from '@/components/workout-page/ExerciseCard';
+import { useTheme, useThemedStyles } from '@/context/themeContext';
 import { useWorkout } from '@/context/workoutContext';
 import { exerciseImages } from '@/data/exerciseImages';
 import exercises from "@/data/exercises.json";
-import { colors, globalStyles } from '@/styles/global';
+import { createGlobalStyles, ThemeColors } from '@/styles/global';
+
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -10,6 +12,9 @@ import { FlatList } from 'react-native-gesture-handler';
 
 export default function WorkoutList() {
   const { addExercise } = useWorkout();
+  const {colors} = useTheme()
+  const globalStyles = useThemedStyles(createGlobalStyles)
+  const styles = useThemedStyles(createStyles)
 
   return (
     <View style={styles.container}>
@@ -50,7 +55,7 @@ export default function WorkoutList() {
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 5,

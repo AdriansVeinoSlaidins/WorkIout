@@ -1,8 +1,10 @@
-import { globalStyles } from "@/styles/global";
+
+import { useThemedStyles } from "@/context/themeContext";
+import { createGlobalStyles } from "@/styles/global";
 import { Pressable, ScrollView, Text } from "react-native";
 
 export default function profile() {
-
+    const globalStyles = useThemedStyles(createGlobalStyles)
 
     const cehckUser = async () => {
         

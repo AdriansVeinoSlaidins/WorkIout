@@ -1,11 +1,15 @@
+import { useThemedStyles } from '@/context/themeContext';
 import { useAuth } from '@/hooks/useAuth';
-import { colors } from '@/styles/global';
+import { ThemeColors } from '@/styles/global';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useTheme } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeHeader() {
   const { session, loading } = useAuth();
+
+  const {colors} = useTheme()
+  const styles = useThemedStyles(createStyles)
 
   const switchViews = () => {
     if (!loading && session) {
@@ -44,7 +48,7 @@ export default function HomeHeader() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   header: {
     width: '100%',
     height: 60,

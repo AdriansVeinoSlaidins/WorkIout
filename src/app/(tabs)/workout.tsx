@@ -1,11 +1,12 @@
-import CustomHandle from "@/components/workout-page/customHandle";
-import ExerciseCard from "@/components/workout-page/exerciseCard";
-import ExerciseSets from "@/components/workout-page/exerciseSets";
+import CustomHandle from "@/components/workout-page/CustomHandle";
+import ExerciseCard from "@/components/workout-page/ExerciseCard";
+import ExerciseSets from "@/components/workout-page/ExerciseSets";
+import { useTheme, useThemedStyles } from "@/context/themeContext";
 import { useWorkout } from "@/context/workoutContext";
 import { exerciseImages } from "@/data/exerciseImages";
 import useRestTimer from "@/hooks/useWorkoutRestTimer";
 import useTimer from "@/hooks/useWorkoutTimer";
-import { colors, globalStyles } from "@/styles/global";
+import { createGlobalStyles, ThemeColors } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { router, useLocalSearchParams } from "expo-router";
@@ -16,6 +17,10 @@ import { useAuth } from "../../hooks/useAuth";
 
 
 export default function workout() {
+    const {colors} = useTheme()
+    const globalStyles = useThemedStyles(createGlobalStyles)
+    const styles = useThemedStyles(createStyles)
+
     // Bottom Sheet
     const SnapPoints = useMemo(() => ["9%", "100%"], []);
     const BottomSheetRef = useRef<BottomSheet>(null);
@@ -230,7 +235,10 @@ export default function workout() {
     );
 }
 
-const styles = StyleSheet.create({
+
+
+const createStyles = (colors: ThemeColors) =>
+StyleSheet.create({
     contentContainer: {
         backgroundColor: colors.surface,
         padding: 10,

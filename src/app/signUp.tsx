@@ -1,4 +1,5 @@
-import { colors, globalStyles } from "@/styles/global";
+import { useTheme, useThemedStyles } from "@/context/themeContext";
+import { createGlobalStyles, ThemeColors } from "@/styles/global";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
@@ -11,7 +12,9 @@ import {
 import { supabase } from "../../lib/supabase";
 
 export default function Signup() {
-
+  const {colors} = useTheme()
+  const styles = useThemedStyles(createStyles)
+  const globalStyles = useThemedStyles(createGlobalStyles)
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -99,7 +102,7 @@ export default function Signup() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,

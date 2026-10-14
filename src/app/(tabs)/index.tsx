@@ -1,10 +1,11 @@
 import WorkoutHistory from "@/components/home-page/WorkoutHistory";
+import { useThemedStyles } from "@/context/themeContext";
 import { ScrollView, Text, TouchableOpacity } from "react-native";
 import { supabase } from "../../../lib/supabase";
-import { globalStyles } from "../../styles/global";
+import { createGlobalStyles } from "../../styles/global";
 
 export default function Index() {
-
+  const globalStyles = useThemedStyles(createGlobalStyles)
   const deleteOldestWorkout = async() => {
     const {data: oldest, error: fetchError } = await supabase
       .from("workouts")

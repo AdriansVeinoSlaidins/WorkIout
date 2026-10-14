@@ -1,4 +1,5 @@
-import { colors } from "@/styles/global";
+import { useTheme, useThemedStyles } from "@/context/themeContext";
+import { ThemeColors } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { useBottomSheet } from "@gorhom/bottom-sheet";
 import { RefObject } from "react";
@@ -26,6 +27,9 @@ export default function CustomHandle({
     onFinish: () => void;
 }) {
     const { animatedIndex } = useBottomSheet(); // continuous, live drag value
+
+    const {colors} = useTheme()
+    const styles = useThemedStyles(createStyles)
 
     const toggleSheet = () => {
         if (sheetIndex === 1) {
@@ -101,7 +105,7 @@ export default function CustomHandle({
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     handleContainer: { height: 75, alignItems: "center" },
     handle: {
         width: 50,

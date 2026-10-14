@@ -1,5 +1,6 @@
+import { useTheme, useThemedStyles } from "@/context/themeContext";
 import { useAuth } from "@/hooks/useAuth";
-import { colors } from "@/styles/global";
+import { ThemeColors } from "@/styles/global";
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { supabase } from "../../../lib/supabase";
@@ -49,6 +50,9 @@ export default function WorkoutHistory() {
     const [workouts, setWorkouts] = useState<Workout[]>([]);
     const { session } = useAuth();
     const userId = session?.user.id;
+
+    const {colors} = useTheme()
+    const styles = useThemedStyles(createStyles)
 
     const getWorkouts = useCallback(async () => {
         if (!userId) return;
@@ -183,7 +187,7 @@ export default function WorkoutHistory() {
     );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         margin: 15,
         
