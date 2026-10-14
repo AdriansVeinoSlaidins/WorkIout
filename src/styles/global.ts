@@ -119,5 +119,3 @@ export const createGlobalStyles = (colors: ThemeColors) =>
     },
   });
 
-// Temporary: keeps screens you haven't migrated yet working (they stay dark).
-// Delete these two lines once nothing imports them anymore.
