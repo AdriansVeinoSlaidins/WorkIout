@@ -23,7 +23,7 @@ export default function WorkoutList() {
           style={styles.backButton}
           onPress={() => router.push("/(tabs)/workout")}
         >
-          <Ionicons name="arrow-back" size={35} color="white" />
+          <Ionicons name="arrow-back" size={35} color={colors.text} />
         </TouchableOpacity>
 
         <Text style={[globalStyles.title, styles.headerTitle]}>Exercises</Text>
