@@ -1,6 +1,7 @@
-import CustomHandle from "@/components/workout-page/CustomHandle";
-import ExerciseCard from "@/components/workout-page/ExerciseCard";
-import ExerciseSets from "@/components/workout-page/ExerciseSets";
+import CustomHandle from "@/components/workout-page/customHandle";
+import ExerciseCard from "@/components/workout-page/exerciseCard";
+import ExerciseSets from "@/components/workout-page/exerciseSets";
+import { useRestTime } from "@/context/restTimeContext";
 import { useTheme, useThemedStyles } from "@/context/themeContext";
 import { useWorkout } from "@/context/workoutContext";
 import { exerciseImages } from "@/data/exerciseImages";
@@ -38,7 +39,8 @@ export default function workout() {
     const { time, reset, seconds } = useTimer(running);
 
     //Rest timer
-    const rest = useRestTimer(10);
+    const {restTime} = useRestTime()
+    const rest = useRestTimer(restTime);
 
     // Selected exercises
     const {

@@ -1,4 +1,4 @@
-import ExerciseCard from '@/components/workout-page/ExerciseCard';
+import ExerciseCard from '@/components/workout-page/exerciseCard';
 import { useTheme, useThemedStyles } from '@/context/themeContext';
 import { useWorkout } from '@/context/workoutContext';
 import { exerciseImages } from '@/data/exerciseImages';

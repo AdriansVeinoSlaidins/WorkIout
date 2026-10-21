@@ -1,3 +1,4 @@
+import { RestTimeProvider } from "@/context/restTimeContext";
 import { ThemeProvider, useTheme } from "@/context/themeContext";
 import { WorkoutProvider } from "@/context/workoutContext";
 import { Stack } from "expo-router";
@@ -56,11 +57,13 @@ function RootStack() {
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
-        <WorkoutProvider>
-          <RootStack />
-        </WorkoutProvider>
-      </ThemeProvider>
+      <RestTimeProvider>
+        <ThemeProvider>
+          <WorkoutProvider>
+            <RootStack />
+          </WorkoutProvider>
+        </ThemeProvider>
+      </RestTimeProvider>
     </GestureHandlerRootView>
   );
 }

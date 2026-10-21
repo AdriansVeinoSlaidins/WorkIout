@@ -74,7 +74,7 @@ export default function ExerciseCard({
 const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     marginTop: 10,
-    borderRadius: 16,
+    borderRadius: 14,
     padding: 8,
     height: 106,
     flexDirection: 'row',
