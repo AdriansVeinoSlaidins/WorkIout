@@ -20,11 +20,37 @@ export default function TabLayout() {
     }
   }, [loading, session]);
 
+  if (loading || !session) {
+    return (
+      <View
+        style={[
+          globalStyles.container,
+          {
+            flex: 1,
+            backgroundColor: colors.background,
+          },
+        ]}
+      />
+    );
+  }
+
   return (
     <View
-      style={[globalStyles.container, { paddingTop: 0, }]}
+      style={[
+        globalStyles.container,
+        {
+          flex: 1,
+          paddingTop: 0,
+          backgroundColor: colors.surface,
+        },
+      ]}
     >
-      <View style={{backgroundColor: colors.header, paddingTop: insets.top }}>
+      <View
+        style={{
+          backgroundColor: colors.header,
+          paddingTop: insets.top,
+        }}
+      >
         <HomeHeader />
       </View>
 
@@ -32,6 +58,10 @@ export default function TabLayout() {
         backBehavior="history"
         screenOptions={{
           headerShown: false,
+          //animation: "none",
+          sceneStyle: {
+            backgroundColor: colors.background,
+          },
           tabBarStyle: {
             backgroundColor: colors.surface,
             borderTopColor: colors.surfaceLight,
@@ -55,7 +85,11 @@ export default function TabLayout() {
           options={{
             title: "Workout",
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="add-circle" size={size} color={color} />
+              <Ionicons
+                name="add-circle"
+                size={size}
+                color={color}
+              />
             ),
           }}
         />

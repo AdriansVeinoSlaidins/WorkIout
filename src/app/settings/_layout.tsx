@@ -1,13 +1,19 @@
+
 import { useTheme } from "@/context/themeContext";
 import { Stack } from "expo-router";
 
 export default function SettingsLayout() {
-  const {colors} = useTheme()
+  const { colors } = useTheme();
+
   return (
     <Stack
       screenOptions={{
+        //animation: "none",
+        contentStyle: {
+          backgroundColor: colors.background,
+        },
         headerStyle: {
-          backgroundColor: colors.header
+          backgroundColor: colors.header,
         },
         headerTintColor: colors.text,
         headerTitleStyle: {
@@ -15,11 +21,40 @@ export default function SettingsLayout() {
         },
       }}
     >
-        <Stack.Screen name="index" options={{ title: "Settings" } } /> 
-        <Stack.Screen name="themes" options={{ title: "Themes" }} />
-        <Stack.Screen name="units" options={{ title: "Units" }} />
-        <Stack.Screen name="languages" options={{ title: "Languages" }} />
-        <Stack.Screen name="preferences" options={{ title: "Preferences" }} />
+      <Stack.Screen
+        name="index"
+        options={{
+          title: "Settings",
+        }}
+      />
+
+      <Stack.Screen
+        name="themes"
+        options={{
+          title: "Themes",
+        }}
+      />
+
+      <Stack.Screen
+        name="units"
+        options={{
+          title: "Units",
+        }}
+      />
+
+      <Stack.Screen
+        name="languages"
+        options={{
+          title: "Languages",
+        }}
+      />
+
+      <Stack.Screen
+        name="preferences"
+        options={{
+          title: "Preferences",
+        }}
+      />
     </Stack>
   );
 }
