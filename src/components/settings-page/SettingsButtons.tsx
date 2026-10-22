@@ -39,7 +39,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
 
         margin: 5,
         padding: 10,
-        borderRadius: 12,
+        borderRadius: 16,
 
         borderColor: colors.surfaceLight,
         backgroundColor: colors.surface,

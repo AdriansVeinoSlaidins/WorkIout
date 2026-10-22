@@ -32,7 +32,7 @@ export default function preferences() {
 
       {/* workout preferences */}
 
-      <Text style={globalStyles.title}>Workout Preferences</Text>
+      <Text style={[globalStyles.title, {color: colors.primary}]}>Workout Preferences</Text>
       <View style={styles.restTime}>
         <Text style={styles.label}>Rest time (seconds)</Text>
 

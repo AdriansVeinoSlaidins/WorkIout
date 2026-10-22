@@ -197,7 +197,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.surfaceLight,
         elevation: 4,
-        borderRadius: 12,
+        borderRadius: 16,
         padding: 20,
         marginBottom: 10,
     },

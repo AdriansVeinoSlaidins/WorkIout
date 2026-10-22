@@ -254,8 +254,7 @@ export default function workout() {
 
 
 
-const createStyles = (colors: ThemeColors) =>
-StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
     contentContainer: {
         backgroundColor: colors.surface,
         padding: 10,
@@ -282,7 +281,7 @@ StyleSheet.create({
 
     sheetContentHeader: {
         padding: 10,
-        borderRadius: 10,
+        borderRadius: 16,
         alignItems: "center",
         flexDirection: "row",
         justifyContent: "space-between",
@@ -296,7 +295,7 @@ StyleSheet.create({
     addWorkoutButton: {
         backgroundColor: colors.primary,
         padding: 10,
-        borderRadius: 10,
+        borderRadius: 16,
         borderWidth: 1,
         borderColor: colors.surface ,
         elevation: 4,
