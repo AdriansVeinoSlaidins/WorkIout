@@ -1,4 +1,4 @@
-import CustomHandle from "@/components/workout-page/customHandle";
+import CustomHandle, { HandleDataContext } from "@/components/workout-page/customHandle";
 import ExerciseCard from "@/components/workout-page/exerciseCard";
 import ExerciseSets from "@/components/workout-page/exerciseSets";
 import { useRestTime } from "@/context/restTimeContext";
@@ -11,7 +11,7 @@ import { createGlobalStyles, ThemeColors } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { router, useLocalSearchParams } from "expo-router";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, } from "react-native";
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../hooks/useAuth";
@@ -120,6 +120,7 @@ export default function workout() {
         // 3. Reset the UI
         setRunning(false);
         reset();
+        rest.stop();
         setStarted(false);
         clearExercises();
         BottomSheetRef.current?.close();
@@ -127,8 +128,24 @@ export default function workout() {
 
     // rest timer
     const onRestTimePress = () => {
-        router.push("/restTimerSettings")
-    } 
+        router.push("/settings/preferences")
+    }
+
+    // Stable identity: the sheet no longer rebuilds the handle on every timer tick
+    const renderHandle = useCallback(
+        () => <CustomHandle bottomSheetRef={BottomSheetRef} />,
+        []
+    );
+
+    // Values the handle reads through context (these may change every tick)
+    const handleData = {
+        sheetIndex,
+        time,
+        restTime: rest.running ? rest.time : "Rest",
+        restRunning: rest.running,
+        onRestTimePress,
+        onFinish: finishWorkout,
+    };
 
     return (
         <>
@@ -155,90 +172,82 @@ export default function workout() {
 
             {/* Bottom Sheet */}
 
-            <BottomSheet
-                ref={BottomSheetRef}
-                snapPoints={SnapPoints}
-                enablePanDownToClose={false}
-                enableOverDrag={false}
-                index={1}
-                enableHandlePanningGesture={true}
-                enableDynamicSizing={false}
-                backgroundStyle={styles.handleBackground}
-                onChange={(index) => {
-                    setSheetIndex(index);
-                }}
-                handleComponent={() => (
-                    <CustomHandle
-                        bottomSheetRef={BottomSheetRef}
-                        sheetIndex={sheetIndex}
-                        time={time}
-                        restTime={rest.running ? rest.time : "Rest"}
-                        restRunning={rest.running}
-                        onFinish={finishWorkout}
-                        onRestTimePress={onRestTimePress}
-                    />
-                )}
-            >
-                <BottomSheetScrollView
-                    contentContainerStyle={styles.contentContainer}
-                    showsVerticalScrollIndicator={false}
+            <HandleDataContext.Provider value={handleData}>
+                <BottomSheet
+                    ref={BottomSheetRef}
+                    snapPoints={SnapPoints}
+                    enablePanDownToClose={false}
+                    enableOverDrag={false}
+                    index={1}
+                    enableHandlePanningGesture={true}
+                    enableDynamicSizing={false}
+                    backgroundStyle={styles.handleBackground}
+                    onChange={(index) => {
+                        setSheetIndex(index);
+                    }}
+                    handleComponent={renderHandle}
                 >
-                    {/* Header */}
+                    <BottomSheetScrollView
+                        contentContainerStyle={styles.contentContainer}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        {/* Header */}
 
-                    <View style={styles.sheetContentHeader}>
-                        <Text style={[ globalStyles.title,{ marginLeft: 10, fontSize: 22, },]}>
-                            Workout
-                        </Text>
-
-                        <TouchableOpacity
-                            style={styles.addWorkoutButton}
-                            onPress={() => {
-                                router.push("/workoutList");
-                            }}
-                        >
-                            <Ionicons name="add" size={35} color="black"/>
-                        </TouchableOpacity>
-                    </View>
-                    
-                    {/* selected exercises */}
-
-                    {selectedExercises.length === 0? (
-                        <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>No exercises yet</Text>
-                            <Text style={styles.emptySubText}>
-                                Tap + to add your first exercise
+                        <View style={styles.sheetContentHeader}>
+                            <Text style={[ globalStyles.title,{ marginLeft: 10, fontSize: 22, },]}>
+                                Workout
                             </Text>
-                        </View>
-                    ):(
-                        selectedExercises.map((exercise) => (
-                            <View key={exercise.id}>
-                                <ExerciseCard
-                                    name={exercise.name}
-                                    exerciseType={exercise.type}
-                                    target={exercise.target}
-                                    image={exerciseImages[exercise.id]}
-                                    onRemove={() => removeExercise(exercise.id)}
-                                />
-                                <ExerciseSets
-                                    sets={exercise.sets}
-                                    onAdd={() => addSet(exercise.id)}
-                                    onRemove={(setId) => removeSet(exercise.id, setId)}
-                                    onChange={(setId, field, value) =>
-                                        updateSet(exercise.id, setId, field, value)
-                                    }
-                                    onToggleDone={(setId) => {
-                                        const set = exercise.sets.find((s) => s.id === setId);
-                                        toggleSetDone(exercise.id, setId);
-                                        if (set && !set.done) rest.start();
-                                    }}
-                                />
-                            </View> 
-                        ))
-                    )}
-                    
 
-                </BottomSheetScrollView>
-            </BottomSheet>
+                            <TouchableOpacity
+                                style={styles.addWorkoutButton}
+                                onPress={() => {
+                                    router.push("/workoutList");
+                                }}
+                            >
+                                <Ionicons name="add" size={35} color="black"/>
+                            </TouchableOpacity>
+                        </View>
+                        
+                        {/* selected exercises */}
+
+                        {selectedExercises.length === 0? (
+                            <View style={styles.emptyContainer}>
+                                <Text style={styles.emptyText}>No exercises yet</Text>
+                                <Text style={styles.emptySubText}>
+                                    Tap + to add your first exercise
+                                </Text>
+                            </View>
+                        ):(
+                            selectedExercises.map((exercise) => (
+                                <View key={exercise.id}>
+                                    <ExerciseCard
+                                        name={exercise.name}
+                                        exerciseType={exercise.type}
+                                        target={exercise.target}
+                                        image={exerciseImages[exercise.id]}
+                                        onRemove={() => removeExercise(exercise.id)}
+                                    />
+                                    <ExerciseSets
+                                        sets={exercise.sets}
+                                        onAdd={() => addSet(exercise.id)}
+                                        onRemove={(setId) => removeSet(exercise.id, setId)}
+                                        onChange={(setId, field, value) =>
+                                            updateSet(exercise.id, setId, field, value)
+                                        }
+                                        onToggleDone={(setId) => {
+                                            const set = exercise.sets.find((s) => s.id === setId);
+                                            toggleSetDone(exercise.id, setId);
+                                            if (set && !set.done) rest.start();
+                                        }}
+                                    />
+                                </View> 
+                            ))
+                        )}
+                        
+
+                    </BottomSheetScrollView>
+                </BottomSheet>
+            </HandleDataContext.Provider>
         </>
     );
 }

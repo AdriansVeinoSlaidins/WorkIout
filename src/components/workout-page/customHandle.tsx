@@ -2,7 +2,7 @@ import { useTheme, useThemedStyles } from "@/context/themeContext";
 import { ThemeColors } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { useBottomSheet } from "@gorhom/bottom-sheet";
-import { RefObject } from "react";
+import { createContext, RefObject, useContext } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import Animated, {
@@ -11,23 +11,30 @@ import Animated, {
     useAnimatedStyle,
 } from "react-native-reanimated";
 
-export default function CustomHandle({
-    bottomSheetRef,
-    sheetIndex,
-    time,
-    restTime,
-    restRunning,
-    onRestTimePress,
-    onFinish,
-}: {
-    bottomSheetRef: RefObject<BottomSheet | null>;
+// Values that change every tick travel through context, so the handle itself never remounts
+export type HandleData = {
     sheetIndex: number;
     time: string;
     restTime: string;
     restRunning: boolean;
     onRestTimePress: () => void;
     onFinish: () => void;
+};
+
+export const HandleDataContext = createContext<HandleData | null>(null);
+
+function useHandleData() {
+    const ctx = useContext(HandleDataContext);
+    if (!ctx) throw new Error("CustomHandle must be rendered inside <HandleDataContext.Provider>");
+    return ctx;
+}
+
+export default function CustomHandle({
+    bottomSheetRef,
+}: {
+    bottomSheetRef: RefObject<BottomSheet | null>;
 }) {
+    const { sheetIndex, time, restTime, restRunning, onRestTimePress, onFinish } = useHandleData();
     const { animatedIndex } = useBottomSheet(); // continuous, live drag value
 
     const { colors } = useTheme();
@@ -60,7 +67,7 @@ export default function CustomHandle({
 
                 {/* Left: up/down arrow */}
                 <View style={styles.leftGroup}>
-                    <TouchableOpacity style={styles.button} onPress={toggleSheet}>
+                    <TouchableOpacity style={styles.button} onPress={toggleSheet} hitSlop={8}>
                         <Animated.View style={[styles.iconLayer, upStyle]}>
                             <Ionicons name="chevron-up" size={35} color={colors.text} />
                         </Animated.View>
@@ -77,13 +84,17 @@ export default function CustomHandle({
                 {/* Right side */}
                 <View style={styles.rightGroup}>
 
-                    {/* Hourglass button */} 
+                    {/* Hourglass button */}
                     <View style={styles.hourglassSlot}>
                         <Animated.View
                             style={downStyle}
                             pointerEvents={expanded ? "auto" : "none"}
                         >
-                            <TouchableOpacity style={styles.button} onPress={onRestTimePress}>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={onRestTimePress}
+                                hitSlop={8}
+                            >
                                 <Ionicons name="hourglass-outline" size={30} color={colors.text} />
                             </TouchableOpacity>
                         </Animated.View>
@@ -96,19 +107,14 @@ export default function CustomHandle({
                     >
                         <TouchableOpacity
                             style={styles.button}
+                            hitSlop={8}
                             onPress={() => {
                                 Alert.alert(
                                     "Finish workout?",
                                     `Workout time: ${time}`,
                                     [
-                                        {
-                                            text: "No",
-                                            style: "cancel",
-                                        },
-                                        {
-                                            text: "Yes",
-                                            onPress: onFinish,
-                                        },
+                                        { text: "No", style: "cancel" },
+                                        { text: "Yes", onPress: onFinish },
                                     ]
                                 );
                             }}
@@ -152,8 +158,8 @@ const createStyles = (colors: ThemeColors) =>
             alignItems: "center",
         },
         hourglassSlot: {
-            flex: 1,               
-            alignItems: "center",   
+            flex: 1,
+            alignItems: "center",
             justifyContent: "center",
         },
         button: {
