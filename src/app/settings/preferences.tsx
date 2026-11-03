@@ -73,7 +73,7 @@ const createStyles = (colors: ThemeColors) =>
       marginBottom: 10,
     },
     input: {
-      backgroundColor: colors.surface,
+      backgroundColor: colors.background,
       color: colors.text,
       borderRadius: 12,
       borderWidth: 1,
@@ -83,13 +83,13 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 22,
       fontWeight: '800',
       textAlign: 'center',
-      fontVariant: ['tabular-nums'],
     },
     restTime: {
       padding: 10,
       borderWidth: 1,
       borderRadius: 16,
       borderColor: colors.outline,
+      backgroundColor: colors.surface,
     },
     deviderLine: {
       borderWidth: 1,

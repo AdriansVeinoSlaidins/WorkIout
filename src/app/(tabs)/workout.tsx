@@ -131,7 +131,6 @@ export default function workout() {
         router.push("/settings/preferences")
     }
 
-    // Stable identity: the sheet no longer rebuilds the handle on every timer tick
     const renderHandle = useCallback(
         () => <CustomHandle bottomSheetRef={BottomSheetRef} />,
         []
@@ -168,6 +167,7 @@ export default function workout() {
                         {started ? "Workout running" : "Start workout"}
                     </Text>
                 </TouchableOpacity>
+                
             </ScrollView>
 
             {/* Bottom Sheet */}
@@ -178,7 +178,7 @@ export default function workout() {
                     snapPoints={SnapPoints}
                     enablePanDownToClose={false}
                     enableOverDrag={false}
-                    index={1}
+                    index={-1}
                     enableHandlePanningGesture={true}
                     enableDynamicSizing={false}
                     backgroundStyle={styles.handleBackground}

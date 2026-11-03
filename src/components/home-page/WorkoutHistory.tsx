@@ -1,5 +1,6 @@
-import { useTheme, useThemedStyles } from "@/context/themeContext";
+import { useThemedStyles } from "@/context/themeContext";
 import { useAuth } from "@/hooks/useAuth";
+import { dateKey } from "@/hooks/useWorkoutDays";
 import { ThemeColors } from "@/styles/global";
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -27,35 +28,40 @@ type GroupedExercise = {
     sets: SetRow[];
 };
 
-// Turns the flat set rows into one entry per exercise, in workout order
 const groupExercises = (rows: SetRow[]): GroupedExercise[] => {
     const sorted = [...rows].sort(
         (a, b) => a.position - b.position || a.set_number - b.set_number
     );
 
     const groups: GroupedExercise[] = [];
+
     for (const row of sorted) {
         const key = `${row.position}-${row.exercise_id}`;
         const existing = groups.find((g) => g.key === key);
+
         if (existing) {
             existing.sets.push(row);
         } else {
             groups.push({ key, name: row.name, sets: [row] });
         }
     }
+
     return groups;
 };
 
-export default function WorkoutHistory() {
+export default function WorkoutHistory({
+    date,
+}: {
+    date?: string | null;
+}) {
     const [workouts, setWorkouts] = useState<Workout[]>([]);
     const { session } = useAuth();
     const userId = session?.user.id;
 
-    const {colors} = useTheme()
-    const styles = useThemedStyles(createStyles)
+    const styles = useThemedStyles(createStyles);
 
     const getWorkouts = useCallback(async () => {
-        if (!userId) return;
+        if (!userId || !date) return;
 
         const { data, error } = await supabase
             .from("workouts")
@@ -81,11 +87,14 @@ export default function WorkoutHistory() {
         }
 
         setWorkouts((data ?? []) as Workout[]);
-    }, [userId]);
+    }, [userId, date]);
 
-    // Load once and refresh when either table changes
+    // Fetch workouts only when a date is specified
     useEffect(() => {
-        if (!userId) return;
+        if (!userId || !date) {
+            setWorkouts([]);
+            return;
+        }
 
         getWorkouts();
 
@@ -106,10 +115,10 @@ export default function WorkoutHistory() {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [userId, getWorkouts]);
+    }, [userId, date, getWorkouts]);
 
-    // Early return goes AFTER all hooks
-    if (!session) return null;
+    // All hooks must execute before early returns
+    if (!session || !date) return null;
 
     const formatDuration = (totalSeconds: number) => {
         const hours = Math.floor(totalSeconds / 3600);
@@ -124,37 +133,77 @@ export default function WorkoutHistory() {
     };
 
     const formatDate = (isoString: string) => {
-        const date = new Date(isoString);
-        const datePart = date.toLocaleDateString(undefined, {
+        const d = new Date(isoString);
+
+        const datePart = d.toLocaleDateString(undefined, {
             month: "short",
             day: "numeric",
         });
-        const timePart = date.toLocaleTimeString(undefined, {
+
+        const timePart = d.toLocaleTimeString(undefined, {
             hour: "2-digit",
             minute: "2-digit",
         });
+
         return `${datePart}, ${timePart}`;
     };
 
+    // Number workouts using the full list
+    const numbered = workouts.map((workout, index) => ({
+        workout,
+        number: workouts.length - index,
+    }));
+
+    // Only show workouts matching the specified date
+    const visible = numbered.filter(
+        ({ workout }) =>
+            dateKey(new Date(workout.completed_at)) === date
+    );
+
+    // Format date title
+    const [y, m, d] = date.split("-").map(Number);
+
+    const dateTitle = new Date(y, m - 1, d).toLocaleDateString(
+        undefined,
+        {
+            month: "long",
+            day: "numeric",
+        }
+    );
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Last workouts</Text>
+            <Text style={styles.title}>
+                Workouts on {dateTitle}
+            </Text>
 
-            {workouts.map((workout, index) => {
-                const exercises = groupExercises(workout.workout_exercises ?? []);
+            {visible.length === 0 && (
+                <Text style={styles.empty}>
+                    No workouts on this day
+                </Text>
+            )}
+
+            {visible.map(({ workout, number }) => {
+                const exercises = groupExercises(
+                    workout.workout_exercises ?? []
+                );
 
                 return (
-                    <View key={workout.id} style={styles.lastWorkoutContainer}>
+                    <View
+                        key={workout.id}
+                        style={styles.lastWorkoutContainer}
+                    >
                         <View style={styles.workoutCard}>
                             <View>
                                 <Text style={styles.workoutTitle}>
-                                    Workout #{workouts.length - index}
+                                    Workout #{number}
                                 </Text>
 
                                 <Text style={styles.date}>
                                     {formatDate(workout.completed_at)}
                                 </Text>
                             </View>
+
                             <Text style={styles.duration}>
                                 {formatDuration(workout.duration)}
                             </Text>
@@ -163,17 +212,22 @@ export default function WorkoutHistory() {
                         {exercises.length > 0 && (
                             <View style={styles.exerciseList}>
                                 {exercises.map((exercise) => (
-                                    <View key={exercise.key} style={styles.exerciseBlock}>
+                                    <View
+                                        key={exercise.key}
+                                        style={styles.exerciseBlock}
+                                    >
                                         <Text style={styles.exerciseName}>
                                             {exercise.name}
                                         </Text>
+
                                         {exercise.sets.map((set) => (
                                             <Text
                                                 key={set.set_number}
                                                 style={styles.setText}
                                             >
                                                 Set {set.set_number}:{" "}
-                                                {set.weight ?? 0} kg x {set.reps ?? 0}
+                                                {set.weight ?? 0} kg x{" "}
+                                                {set.reps ?? 0}
                                             </Text>
                                         ))}
                                     </View>
@@ -187,74 +241,84 @@ export default function WorkoutHistory() {
     );
 }
 
-const createStyles = (colors: ThemeColors) => StyleSheet.create({
-    container: {
-        margin: 15,
-        
-    },
-    lastWorkoutContainer: {
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.surfaceLight,
-        elevation: 4,
-        borderRadius: 16,
-        padding: 20,
-        marginBottom: 10,
-    },
+const createStyles = (colors: ThemeColors) =>
+    StyleSheet.create({
+        container: {
+            margin: 15,
+        },
 
-    title: {
-        color: colors.text,
-        fontSize: 22,
-        fontWeight: "bold",
-        marginBottom: 15,
-    },
+        lastWorkoutContainer: {
+            backgroundColor: colors.surface,
+            borderWidth: 1,
+            borderColor: colors.surfaceLight,
+            elevation: 4,
+            borderRadius: 16,
+            padding: 20,
+            marginBottom: 10,
+        },
 
-    workoutCard: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
+        title: {
+            color: colors.text,
+            fontSize: 22,
+            fontWeight: "bold",
+            marginBottom: 15,
+        },
 
-    workoutTitle: {
-        color: colors.primary,
-        fontSize: 16,
-        fontWeight: "bold",
-        marginBottom: 8,
-    },
+        empty: {
+            color: colors.textSecondary,
+            fontSize: 14,
+            marginBottom: 10,
+        },
 
-    date: {
-        color: colors.primary,
-        fontSize: 12,
-        marginBottom: 4,
-    },
+        workoutCard: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+        },
 
-    duration: {
-        backgroundColor: colors.background,
-        borderWidth: 9,
-        borderColor: colors.background,
-        borderRadius: 5,
-        color: colors.text,
-        fontSize: 24,
-        fontWeight: "bold",
-    },
+        workoutTitle: {
+            color: colors.primary,
+            fontSize: 16,
+            fontWeight: "bold",
+            marginBottom: 8,
+        },
 
-    exerciseList: {
-        marginTop: 12,
-        paddingTop: 12,
-        borderTopWidth: 1,
-        borderTopColor: colors.surfaceLight,
-        gap: 10,
-    },
-    exerciseBlock: {
-        gap: 2,
-    },
-    exerciseName: {
-        color: colors.text,
-        fontSize: 15,
-        fontWeight: "800",
-    },
-    setText: {
-        color: colors.textMuted,
-        fontSize: 13,
-    },
-});
+        date: {
+            color: colors.primary,
+            fontSize: 12,
+            marginBottom: 4,
+        },
+
+        duration: {
+            backgroundColor: colors.background,
+            borderWidth: 9,
+            borderColor: colors.background,
+            borderRadius: 5,
+            color: colors.text,
+            fontSize: 24,
+            fontWeight: "bold",
+        },
+
+        exerciseList: {
+            marginTop: 12,
+            paddingTop: 12,
+            borderTopWidth: 1,
+            borderTopColor: colors.surfaceLight,
+            gap: 10,
+        },
+
+        exerciseBlock: {
+            gap: 2,
+        },
+
+        exerciseName: {
+            color: colors.text,
+            fontSize: 15,
+            fontWeight: "800",
+        },
+
+        setText: {
+            color: colors.textMuted,
+            fontSize: 13,
+        },
+    });

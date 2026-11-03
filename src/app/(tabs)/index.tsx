@@ -1,4 +1,3 @@
-import WorkoutHistory from "@/components/home-page/WorkoutHistory";
 import { useTheme, useThemedStyles } from "@/context/themeContext";
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { supabase } from "../../../lib/supabase";
@@ -34,8 +33,6 @@ export default function Index() {
   
   return (
       <ScrollView style={globalStyles.scrollviewcontainer}>
-        
-        <WorkoutHistory/>
 
         <TouchableOpacity style={globalStyles.buttonMainBlue} onPress={deleteOldestWorkout}>
           <Text>Delete Oldest</Text>
