@@ -5,6 +5,7 @@ import { ThemeColors } from "@/styles/global";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
+    ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -30,7 +31,6 @@ export default function WorkoutDayScreen() {
 
     return (
         <View style={styles.container}>
-            {/* Header with safe area */}
             <View
                 style={[
                     styles.header,
@@ -55,9 +55,10 @@ export default function WorkoutDayScreen() {
 
                 <View style={styles.headerSpacer} />
             </View>
-
-            {/* Workout history */}
-            <WorkoutHistory date={date} />
+            <ScrollView>
+                {/* Workout history */}
+                <WorkoutHistory date={date} />
+            </ScrollView>
         </View>
     );
 }

@@ -1,5 +1,6 @@
 import { useTheme, useThemedStyles } from '@/context/themeContext';
 import { useAuth } from '@/hooks/useAuth';
+import useStreak from '@/hooks/useStreak';
 import { ThemeColors } from '@/styles/global';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -10,6 +11,7 @@ export default function HomeHeader() {
 
   const {colors} = useTheme()
   const styles = useThemedStyles(createStyles)
+  const {streak, trainedToday} = useStreak()
 
   const switchViews = () => {
     if (!loading && session) {
@@ -34,9 +36,11 @@ export default function HomeHeader() {
       </TouchableOpacity>
 
       {/* Streak */}
-      <TouchableOpacity style={styles.streakButton}>
-        <Ionicons name="flame" size={22} color={colors.text} />
-        <Text style={styles.streak}>12</Text>
+      <TouchableOpacity style={styles.streakButton}
+        onPress={() => {router.push("/streak")}}
+      >
+        <Ionicons name="flame" size={22} color={trainedToday ? "#fc733d" : colors.text} style={{ opacity: trainedToday ? 1 : 0.5 }} />
+        <Text style={styles.streak}>{streak}</Text>
       </TouchableOpacity>
 
       {/* Settings */}

@@ -131,7 +131,7 @@ const createStyles = (colors: ThemeColors) =>
       borderWidth: 1,
       borderColor: colors.surfaceLight,
       padding: 14,
-      marginTop: 20,
+      marginTop: 10,
       elevation: 4,
     },
     headerRow: {

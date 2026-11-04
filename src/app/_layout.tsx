@@ -89,14 +89,22 @@ function RootStack() {
         }}
       />
 
+      
       <Stack.Screen
-        name="settings"
+        name="streak"
         options={{
-          headerShown: false,
+          title: "Streak",
+          headerShown: true,
           presentation: "card",
-          //animation: "none",
           contentStyle: {
             backgroundColor: colors.surface,
+          },
+          headerStyle: {
+            backgroundColor: colors.header,
+          },
+          headerTintColor: colors.text,
+          headerTitleStyle: {
+            fontWeight: "bold",
           },
         }}
       />
