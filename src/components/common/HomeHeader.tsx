@@ -39,7 +39,7 @@ export default function HomeHeader() {
       <TouchableOpacity style={styles.streakButton}
         onPress={() => {router.push("/streak")}}
       >
-        <Ionicons name="flame" size={22} color={trainedToday ? "#fc733d" : colors.text} style={{ opacity: trainedToday ? 1 : 0.5 }} />
+        <Ionicons name="flame" size={22} color={trainedToday ? colors.primary : colors.text} style={{ opacity: trainedToday ? 1 : 0.5 }} />
         <Text style={styles.streak}>{streak}</Text>
       </TouchableOpacity>
 
